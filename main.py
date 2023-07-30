@@ -32,6 +32,23 @@ clusters_black_house = []
 clusters_white_house = []
 clusters_blank = []
 
+is_host = 0
+
+serverSock = socket(AF_INET, SOCK_STREAM)
+clientSock = socket(AF_INET, SOCK_STREAM)
+sender = ''
+receiver = ''
+
+def send(sock):
+    while True:
+        sendData = input(">>>")
+        sock.send(sendData.encode('utf-8'))
+
+def receive(sock):
+    while True:
+        recvData = sock.recv(1024)
+        print("상대방:", recvData.decode('utf-8'))
+
 def main_game(window):
     window.destroy()
     pygame.init()
@@ -48,7 +65,7 @@ def main_game(window):
 
 def start_window():
     window=Tk()
-    window.title('Host/Client 설정')
+    window.title('Host/Client Selection')
     frm=Frame(window, width=345, height=150, bg='gray50')
     '''frm=Frame(window, width=340, height=250, bg='black')'''
     frm.pack()
@@ -61,56 +78,75 @@ def start_window():
 def host_setting_window(window):
     window.destroy()
     new_window=Tk()
-    new_window.title('호스트 설정')
+    new_window.title('Host Settings')
     frm=Frame(new_window, width=345, height=250, bg='gray50')
     '''frm=Frame(window, width=340, height=250, bg='black')'''
     frm.pack()
-    l1=Label(new_window, text='포트 넘버(4자리)를 설정해주세요.', bg='gray50', fg='white', font=('Helvetica', 15))
+    l1=Label(new_window, text='Enter a Port number (4 digits)', bg='gray50', fg='white', font=('Helvetica', 15))
     l1.place(x=30, y=15)
     entry=Entry(new_window, width = 5, font = ('Helvetica', 20))
     entry.place(x=130, y=50)
-    button_port = Button(new_window, text = "    입력 완료    ", height = 2, width = 40, command = lambda: waiting_for_access(new_window, entry))
+    button_port = Button(new_window, text = "    Next Step    ", height = 2, width = 40, command = lambda: waiting_for_access(new_window, entry))
     button_port.place(x=30, y=100)
-    button_back = Button(new_window, text = "    Host/Client 세팅으로 돌아가기    ", height = 2, width = 40, command = lambda: backto_start_window(new_window))
+    button_back = Button(new_window, text = "    Back to Host/Client Selection    ", height = 2, width = 40, command = lambda: backto_start_window(new_window))
     button_back.place(x=30, y=150)
     new_window.mainloop()
 
 def client_setting_window(window):
     window.destroy()
     new_window=Tk()
-    new_window.title('호스트 설정')
-    frm=Frame(new_window, width=400, height=200, bg='gray50')
+    new_window.title('Client Settings')
+    frm=Frame(new_window, width=400, height=240, bg='gray50')
     '''frm=Frame(window, width=340, height=250, bg='black')'''
     frm.pack()
-    l1=Label(new_window, text='접속할 상대의 IP 주소와 포트넘버를 입력해주세요.', bg='gray50', fg='white', font=('Helvetica', 13))
-    l1.place(x=15, y=15)
-    l2=Label(new_window, text='IP 주소', bg='gray50', fg='white', font=('Helvetica', 10))
-    l2.place(x=85, y=77)
-    l3=Label(new_window, text='포트 넘버', bg='gray50', fg='white', font=('Helvetica', 10))
-    l3.place(x=85, y=127)
+    l1=Label(new_window, text='Please put the IP Address and Port Number', bg='gray50', fg='white', font=('Helvetica', 14))
+    l1.place(x=12, y=15)
+    l2=Label(new_window, text='IP Address:', bg='gray50', fg='white', font=('Helvetica', 12))
+    l2.place(x=60, y=76)
+    l3=Label(new_window, text='Port Number: ', bg='gray50', fg='white', font=('Helvetica', 12))
+    l3.place(x=60, y=126)
     entry_ip=Entry(new_window, width = 10, font = ('Helvetica', 18))
     entry_ip.place(x=160, y=70)
     entry_port=Entry(new_window, width = 10, font = ('Helvetica', 18))
     entry_port.place(x=160, y=120)
+    button_ok = Button(new_window, text = "    Next Step    ", height = 2, width = 30, font = ('Helvetica', 13))
+    button_ok.place(x=50, y=180)
     new_window.mainloop()
 
-def waiting_for_access(window, entry):
-    port_num = entry.get()
-    window.destroy()
-    my_ip = gethostbyname(gethostname())
+def waiting_window(port_num, my_ip):
     new_window=Tk()
-    new_window.title('호스트 대기중')
+    new_window.title('Waiting for Client...')
     frm=Frame(new_window, width=345, height=150, bg='white')
-    '''frm=Frame(window, width=340, height=250, bg='black')'''
     frm.pack()
-    test_text = port_num
     l1=Label(new_window, text='상대방의 접속을 대기중입니다...', fg='black', font = ('Helvetica', 10))
     l1.place(x=10, y=10)
     l2=Label(new_window, text='IP Address: ' + my_ip, fg='black', font = ('Helvetica', 10))
     l2.place(x=10, y=50)
-    l3=Label(new_window, text='Port Number: ' + test_text, fg='black', font = ('Helvetica', 10))
+    l3=Label(new_window, text='Port Number: ' + str(port_num), fg='black', font = ('Helvetica', 10))
     l3.place(x=10, y=70)
     new_window.mainloop()
+
+def waiting_for_access(window, entry):
+    global serverSock
+    global sender
+    global receiver
+    port_num = int(entry.get())
+    print(port_num)
+    serverSock.bind(('', port_num))
+    serverSock.listen(1)
+    window.destroy()
+    my_ip = gethostbyname(gethostname())
+    tk_thread = threading.Thread(target = waiting_window, args=(port_num, my_ip))
+    tk_thread.start()
+    tk_thread.join()
+    connectionSock, addr = serverSock.accept()
+    #connectionSock, addr = serverSock.accept()    
+    is_host = 0
+    '''sender = threading.Thread(target = send, args = (connectionSock, ))
+    receiver = threading.Thread(target = receive, args = (connectionSock, ))
+    sender.start()
+    receiver.start()
+    main_game(new_window)'''
 
 def backto_start_window(window):
     window.destroy()
