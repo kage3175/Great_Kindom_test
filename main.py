@@ -126,7 +126,7 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     window.destroy()
     main_game()
 
-def waiting_window(port_num, my_ip):
+def waiting_window(port_num, my_ip, stop_event):
     '''def check_stop_event():
         if stop_event.is_set():
             new_window.destroy()
@@ -143,12 +143,11 @@ def waiting_window(port_num, my_ip):
     l2.place(x=10, y=50)
     l3=Label(new_window, text='Port Number: ' + str(port_num), fg='black', font = ('Helvetica', 10))
     l3.place(x=10, y=70)
-    '''while not stop_event.is_set():
+    while not stop_event.is_set():
         new_window.update()
         time.sleep(0.1)
 
-    new_window.destroy()'''
-    new_window.update()
+    new_window.destroy()
 
 def waiting_for_access(window, entry):
     global serverSock
@@ -161,15 +160,13 @@ def waiting_for_access(window, entry):
     serverSock.listen(1)
     window.destroy()
     my_ip = gethostbyname(gethostname())
-    '''stop_event = threading.Event()
+    stop_event = threading.Event()
     tk_thread = threading.Thread(target = waiting_window, args=(port_num, my_ip, stop_event))
-    tk_thread.start()'''
-    waiting_window(port_num,my_ip)
+    tk_thread.start()
     connectionSock, addr = serverSock.accept()
     print(3)
     time.sleep(0.1)
-    #stop_event.set()
-
+    stop_event.set()
     is_host = 0
     sender = threading.Thread(target = send, args = (connectionSock, ))
     receiver = threading.Thread(target = receive, args = (connectionSock, ))
