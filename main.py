@@ -115,12 +115,9 @@ def client_setting_window(window):
 def client_check_valid_ip(window, entry_ip, entry_port):
     global clientSock, sender, receiver
     ip_address = entry_ip.get()
-    print(ip_address)
     port = int(entry_port.get())
-    print(port)
-    clientSock = socket(AF_INET, SOCK_STREAM)
+    print('x')
     clientSock.connect((ip_address, port))
-    print(11)
     sender = threading.Thread(target = send, args = (clientSock, ))
     receiver = threading.Thread(target = receive, args = (clientSock, ))
 
@@ -128,7 +125,6 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     receiver.start()
     window.destroy()
     main_game()
-
 
 def waiting_window(port_num, my_ip, stop_event):
     '''def check_stop_event():
