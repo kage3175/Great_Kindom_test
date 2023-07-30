@@ -108,7 +108,7 @@ def client_setting_window(window):
     entry_ip.place(x=160, y=70)
     entry_port=Entry(new_window, width = 10, font = ('Helvetica', 18))
     entry_port.place(x=160, y=120)
-    button_ok = Button(new_window, text = "    Next Step    ", height = 2, width = 30, font = ('Helvetica', 13))
+    button_ok = Button(new_window, text = "    Next Step    ", height = 2, width = 30, font = ('Helvetica', 13), command = lambda: client_check_valid_ip(new_window, entry_ip, entry_port))
     button_ok.place(x=50, y=180)
     new_window.mainloop()
 
@@ -116,6 +116,7 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     global clientSock, sender, receiver
     ip_address = entry_ip.get()
     port = int(entry_port.get())
+    print('x')
     try:
         clientSock.connect((ip_address, port))
         sender = threading.Thread(target = send, args = (clientSock, ))
@@ -123,6 +124,7 @@ def client_check_valid_ip(window, entry_ip, entry_port):
 
         sender.start()
         receiver.start()
+        window.destroy()
         main_game()
     except:
         sys.exit(1)
