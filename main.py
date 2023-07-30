@@ -49,8 +49,7 @@ def receive(sock):
         recvData = sock.recv(1024)
         print("상대방:", recvData.decode('utf-8'))
 
-def main_game(window):
-    window.destroy()
+def main_game():
     pygame.init()
     screen = pygame.display.set_mode((350, 500))
     pygame.display.set_caption("Great_Kindom_test")
@@ -113,7 +112,28 @@ def client_setting_window(window):
     button_ok.place(x=50, y=180)
     new_window.mainloop()
 
-def waiting_window(port_num, my_ip):
+def client_check_valid_ip(window, entry_ip, entry_port):
+    global clientSock, sender, receiver
+    ip_address = entry_ip.get()
+    port = int(entry_port.get())
+    try:
+        clientSock.connect((ip_address, port))
+        sender = threading.Thread(target = send, args = (clientSock, ))
+        receiver = threading.Thread(target = receive, args = (clientSock, ))
+
+        sender.start()
+        receiver.start()
+        main_game()
+    except:
+        sys.exit(1)
+
+def waiting_window(port_num, my_ip, stop_event):
+    '''def check_stop_event():
+        if stop_event.is_set():
+            new_window.destroy()
+            return
+        else:
+            new_window.after(100, check_stop_event)'''
     new_window=Tk()
     new_window.title('Waiting for Client...')
     frm=Frame(new_window, width=345, height=150, bg='white')
@@ -124,7 +144,11 @@ def waiting_window(port_num, my_ip):
     l2.place(x=10, y=50)
     l3=Label(new_window, text='Port Number: ' + str(port_num), fg='black', font = ('Helvetica', 10))
     l3.place(x=10, y=70)
-    new_window.mainloop()
+    while not stop_event.is_set():
+        new_window.update()
+        time.sleep(0.1)
+
+    new_window.destroy()
 
 def waiting_for_access(window, entry):
     global serverSock
@@ -136,17 +160,18 @@ def waiting_for_access(window, entry):
     serverSock.listen(1)
     window.destroy()
     my_ip = gethostbyname(gethostname())
-    tk_thread = threading.Thread(target = waiting_window, args=(port_num, my_ip))
+    stop_event = threading.Event()
+    tk_thread = threading.Thread(target = waiting_window, args=(port_num, my_ip, stop_event))
     tk_thread.start()
-    tk_thread.join()
     connectionSock, addr = serverSock.accept()
-    #connectionSock, addr = serverSock.accept()    
+    time.sleep(0.1)
+    stop_event.set()
     is_host = 0
-    '''sender = threading.Thread(target = send, args = (connectionSock, ))
+    sender = threading.Thread(target = send, args = (connectionSock, ))
     receiver = threading.Thread(target = receive, args = (connectionSock, ))
     sender.start()
     receiver.start()
-    main_game(new_window)'''
+    main_game()
 
 def backto_start_window(window):
     window.destroy()
