@@ -166,6 +166,7 @@ def waiting_for_access(window, entry):
     tk_thread = threading.Thread(target = waiting_window, args=(port_num, my_ip, stop_event))
     tk_thread.start()
     connectionSock, addr = serverSock.accept()
+    print(3)
     time.sleep(0.1)
     stop_event.set()
     is_host = 0
@@ -173,6 +174,7 @@ def waiting_for_access(window, entry):
     receiver = threading.Thread(target = receive, args = (connectionSock, ))
     sender.start()
     receiver.start()
+    print(4)
     main_game()
 
 def backto_start_window(window):
