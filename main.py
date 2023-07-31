@@ -84,6 +84,8 @@ def main_game():
     if opponent_out:
         opponent_leaved()
         running = False
+        sender.join()
+        receiver.join()
         msg = 'Q QUIT_THE_GAME'
         connectionSock.send(msg.encode('utf-8'))
         pygame.quit()
