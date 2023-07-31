@@ -83,6 +83,7 @@ def main_game():
         for i in range(9):
             screen.blit(imgBlackStone, (round(LEFT_TOP[0]+GAP[0]*(i-1)), round(LEFT_TOP[1]+GAP[1]*(i-1))))
         pygame.display.flip()
+        time.sleep(0.1)
 
 
 def start_window():
