@@ -192,7 +192,7 @@ def main_game():
                 posx, posy = round(LEFT_TOP[0]+GAP[0]*(i-1)), round(LEFT_TOP[1]+GAP[1]*(j-1))
                 if board[i+1][j+1] == 1:
                     screen.blit(imgBlackStone, (posx, posy))
-                elif board[i+1][j+1] == 1:
+                elif board[i+1][j+1] == 2:
                     screen.blit(imgWhiteStone, (posx, posy))
                 elif board[i+1][j+1] == 3:
                     screen.blit(imgNeutral, (posx, posy))
