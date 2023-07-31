@@ -43,19 +43,19 @@ sender = ''
 receiver = ''
 connectionSock = None
 
-def send(sock):
+def send(sock, stop_event):
     global running
-    while running:
+    while running and not stop_event.set():
         sendData = input(">>>")
         sock.send(sendData.encode('utf-8'))
 
-def receive(sock):
+def receive(sock, stop_event):
     global running
-    while running:
+    while running and not stop_event.set():
         recvData = sock.recv(1024)
         print("상대방:", recvData.decode('utf-8'))
 
-def main_game():
+def main_game(stop_event):
     global connectionSock, receiver, sender, is_host, running
     pygame.init()
     running = True
@@ -74,6 +74,7 @@ def main_game():
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
+                stop_event.set()
                 pygame.quit()
                 sender.join()
                 receiver.join()
@@ -206,11 +207,12 @@ def waiting_for_access(window, entry):
     time.sleep(0.1)
     stop_event.set()
     is_host = True
-    sender = threading.Thread(target = send, args = (connectionSock, ))
-    receiver = threading.Thread(target = receive, args = (connectionSock, ))
+    new_stop_event = threading.Event()
+    sender = threading.Thread(target = send, args = (connectionSock, new_stop_event))
+    receiver = threading.Thread(target = receive, args = (connectionSock, new_stop_event))
     sender.start()
     receiver.start()
-    main_game()
+    main_game(new_stop_event)
 
 def backto_start_window(window):
     window.destroy()
