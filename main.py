@@ -242,6 +242,8 @@ def make_cluster(start, end):
                         for k in range(4):
                             newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
                             if board[newx][newy] == 0 and mark_cluster[newx][newy]:
+                                if newx == 1 and newy == 4:
+                                    print("hmm")
                                 queue.append((newx, newy))
                                 mark_cluster[newx][newy] = False
                     clusters_blank.append(temp)
