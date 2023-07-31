@@ -85,10 +85,11 @@ def accept_counting(): #작업해야하는거
 
 def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank
+    make_cluster(1, BOARD_SIZE+1)
     if board[i][j] != 0:
         return False
     else:
-        make_cluster(1, BOARD_SIZE+1)
+        
         if turn >= 4:
             if not_valid_house == 1: #상대방 돌이 흑이면, 내가 둔 곳이 흑 집 클러스터 내부인지 확인
                 for cluster in clusters_black_house:
@@ -179,7 +180,7 @@ def main_game():
                                         turn += 1
                                     else:
                                         print('not valid point')
-                                        print(clusters_black_house, clusters_white_house)
+                                        print(clusters_black_house, clusters_white_house, clusters_blank)
                         '''msg = 'c ' + str(posx) + " " + str(posy)
                         connectionSock.send(msg.encode('utf-8'))
                         print(position)
