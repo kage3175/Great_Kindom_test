@@ -158,6 +158,7 @@ def main_game():
                         for i in range(9):
                             for j in range(9):
                                 if (posx >= (round(LEFT_GRID[0]+GAP_GRID[0]*i) - POS_CATCH) and posx <= (round(LEFT_GRID[0]+GAP_GRID[0]*i) + POS_CATCH)) and (posy >= (round(LEFT_GRID[1]+GAP_GRID[1]*j) - POS_CATCH) and posy <= (round(LEFT_GRID[1]+GAP_GRID[1]*j) + POS_CATCH)): #i, j의 인식 범위를 누른 경우
+                                    print(i+1, j+1)
                                     if check_valid_pos(i+1, j+1, turn, op_stone):
                                         board[i+1][j+1] = my_stone
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
