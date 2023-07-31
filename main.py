@@ -47,12 +47,9 @@ opponent_out = False
 def send(sock):
     global running
     while running:
-        try:
-            sock.settimeout(1.0)
-            sendData = input(">>>")
-            sock.send(sendData.encode('utf-8'))
-        except timeout:
-            continue
+        sendData = input(">>>")
+        sock.send(sendData.encode('utf-8'))
+
 
 
 def receive(sock):
