@@ -33,6 +33,7 @@ clusters_neutral = []
 clusters_black_house = []
 clusters_white_house = []
 clusters_blank = []
+board = [[0 for i in range(BOARD_SIZE+2)] for j in range(BOARD_SIZE+2)]
 
 is_host = True
 running = True
@@ -54,11 +55,17 @@ def receive(sock):
         if words[0] == 'q' or words[0] == 'Q':
             msg = 'Q 1'
             sock.send(msg.encode('utf-8'))
+            content = 'Q 1'
             return
         else:
             content = line
             print(line)
-        print("상대방:", recvData.decode('utf-8'))
+
+def you_win(): #작업해야 하는 거
+    print('you win')
+
+def accept_counting():
+    print('wow')
 
 def main_game():
     global connectionSock, is_host, running, content
@@ -83,10 +90,12 @@ def main_game():
         if random.random() > 0.5:
             whose_black = False
             my_stone = 2
+            op_stone = 1
             msg = 'w white'
         else:
             whose_black = True
             my_stone = 1
+            op_stone = 2
             msg = 'w black'
         print(msg)
         connectionSock.send(msg.encode('utf-8'))
@@ -95,8 +104,10 @@ def main_game():
         if recvData.decode('utf-8') == 'w black':
             print(2)
             my_stone = 2
+            op_stone = 1
         else:
             my_stone = 1
+            op_stone = 2
 
     turn = 1
     receiver = threading.Thread(target=receive, args = (connectionSock,))
@@ -133,8 +144,18 @@ def main_game():
         for i in range(9):
             screen.blit(imgBlackStone, (round(LEFT_TOP[0]+GAP[0]*(i-1)), round(LEFT_TOP[1]+GAP[1]*(i-1))))
         pygame.display.flip()
-        if turn % 2 != my_stone % 2 and content != None:
+        if turn % 2 != my_stone % 2 and content != None: # 상대방이 둔 수를 받는 경우
             print('opponent: ' + content)
+            if content[0] == 'c' or content[0] == 'C':# #상대방이 좌표를 보낸 경우
+                lst_words = list(content.split())
+                posx, posy = int(lst_words[1]), int(lst_words[2])
+                #board[posx][posy] = op_stone
+            elif content[0] == 'r' or content[0] == 'R': #상대방이 기권한 경우
+                you_win()
+            elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우
+                opponent_leaved()
+            elif content[0] == 'h' or content[0] == 'H': #상대방이 계가를 요청한 경우
+                accept_counting()
             content = None
             turn+=1
             waste = pygame.mouse.get_pos()
