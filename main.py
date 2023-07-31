@@ -83,6 +83,7 @@ def main_game():
             my_stone = 1
 
     turn = 1
+    waiting_data = False
 
     while True:
         for event in pygame.event.get():
@@ -98,7 +99,7 @@ def main_game():
                     clientSock.close()
                 print(2)
                 sys.exit()
-            elif event.type==MOUSEBUTTONDOWN and event.button==1:
+            elif event.type==MOUSEBUTTONDOWN and event.button==1 and not waiting_data:
                 if turn % 2 == my_stone % 2: # 내 턴인 경우
                     position=pygame.mouse.get_pos()
                     msg = 'c ' + str(position[0]) + " " + str(position[1])
@@ -115,9 +116,11 @@ def main_game():
             screen.blit(imgBlackStone, (round(LEFT_TOP[0]+GAP[0]*(i-1)), round(LEFT_TOP[1]+GAP[1]*(i-1))))
         pygame.display.flip()
         if turn % 2 != my_stone % 2:
+            waiting_data = True
             recvData = connectionSock.recv(1024)
             print('opponent: ' + recvData.decode('utf-8'))
             turn+=1
+            waiting_data = False
         time.sleep(0.1)
 
 
