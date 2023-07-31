@@ -78,8 +78,8 @@ def main_game(stop_event):
                 print(1)
                 pygame.quit()
                 print(1)
-                sender.join()
-                receiver.join()
+                sender.join(timeout = 1)
+                receiver.join(timeout = 1)
                 print(1)
                 if is_host:
                     serverSock.close()
