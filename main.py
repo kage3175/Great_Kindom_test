@@ -85,10 +85,6 @@ def main_game():
     turn = 1
 
     while True:
-        if turn % 2 != my_stone % 2:
-            recvData = connectionSock.recv(1024)
-            print('opponent: ' + recvData.decode('utf-8'))
-            turn+=1
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
@@ -118,6 +114,10 @@ def main_game():
         for i in range(9):
             screen.blit(imgBlackStone, (round(LEFT_TOP[0]+GAP[0]*(i-1)), round(LEFT_TOP[1]+GAP[1]*(i-1))))
         pygame.display.flip()
+        if turn % 2 != my_stone % 2:
+            recvData = connectionSock.recv(1024)
+            print('opponent: ' + recvData.decode('utf-8'))
+            turn+=1
         time.sleep(0.1)
 
 
