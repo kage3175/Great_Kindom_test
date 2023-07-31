@@ -74,8 +74,8 @@ def main_game():
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
-                sender.join()
-                receiver.join()
+                sender.join(timeout=1.0)
+                receiver.join(timeout=1.0)
                 pygame.quit()
                 if is_host:
                     serverSock.close()
