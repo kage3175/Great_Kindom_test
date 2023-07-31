@@ -45,13 +45,13 @@ connectionSock = None
 
 def send(sock, stop_event):
     global running
-    while running and not stop_event.set():
+    while running and not stop_event.is_set():
         sendData = input(">>>")
         sock.send(sendData.encode('utf-8'))
 
 def receive(sock, stop_event):
     global running
-    while running and not stop_event.set():
+    while running and not stop_event.is_set():
         recvData = sock.recv(1024)
         print("상대방:", recvData.decode('utf-8'))
 
@@ -75,13 +75,17 @@ def main_game(stop_event):
             if event.type == QUIT:
                 running = False
                 stop_event.set()
+                print(1)
                 pygame.quit()
+                print(1)
                 sender.join()
                 receiver.join()
+                print(1)
                 if is_host:
                     serverSock.close()
                 else:
                     clientSock.close()
+                print(1)
                 sys.exit()
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position=pygame.mouse.get_pos()
