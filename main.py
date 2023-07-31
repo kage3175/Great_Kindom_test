@@ -47,6 +47,18 @@ clientSock = socket(AF_INET, SOCK_STREAM)
 connectionSock = None
 content = None
 
+def clear_board():
+    global board
+    for i in range(BOARD_SIZE+2):
+        for j in range(BOARD_SIZE+2):
+            board[i][j] = 0
+    board[int(BOARD_SIZE/2)+1][int(BOARD_SIZE/2)+1] = 3
+    for i in range(BOARD_SIZE+2):
+        board[0][i]=3
+        board[BOARD_SIZE+1][i]=3
+        board[i][0]=3
+        board[i][BOARD_SIZE+1]=3
+
 def opponent_leaved(): ### 작업해야함
     print('out')
 
@@ -135,6 +147,8 @@ def main_game():
     receiver = threading.Thread(target=receive, args = (connectionSock,))
     receiver.start()
     content = None
+
+    clear_board()
 
     while True:
         for event in pygame.event.get():
