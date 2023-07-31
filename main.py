@@ -40,6 +40,7 @@ serverSock = socket(AF_INET, SOCK_STREAM)
 clientSock = socket(AF_INET, SOCK_STREAM)
 sender = ''
 receiver = ''
+connectionSock = None
 
 def send(sock):
     while True:
@@ -52,6 +53,7 @@ def receive(sock):
         print("상대방:", recvData.decode('utf-8'))
 
 def main_game():
+    global connectionSock, receiver, sender
     pygame.init()
     screen=pygame.display.set_mode((800,720))
     pygame.display.set_caption('Great Kingdom')
@@ -71,6 +73,8 @@ def main_game():
                 sys.exit()
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position=pygame.mouse.get_pos()
+                msg = str(position[0]) + " " + str(position[1])
+                connectionSock.send(msg.encode('utf-8'))
                 print(position)
         screen.fill((255,255,255))
         screen.blit(imgBoard, (52,49))
@@ -172,6 +176,7 @@ def waiting_for_access(window, entry):
     global serverSock
     global sender
     global receiver
+    global connectionSock
     port_num = int(entry.get())
     print(port_num)
     serverSock = socket(AF_INET, SOCK_STREAM)
