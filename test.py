@@ -28,6 +28,6 @@ while True:
     screen.blit(imgBoard, (52,49))
     '''screen.blit(imgBlackStone, imgBlackStone_RectObj)
     screen.blit(imgWhiteStone, imgWhiteStone_RectObj)'''
-    for i in range(9):
-        screen.blit(imgBlackStone, (round(LEFT_TOP[0]+SPACE[0]*(i-1)), round(LEFT_TOP[1]+SPACE[1]*(i-1))))
+    '''for i in range(9):
+        screen.blit(imgBlackStone, (round(LEFT_TOP[0]+SPACE[0]*(i-1)), round(LEFT_TOP[1]+SPACE[1]*(i-1))))'''
     pygame.display.flip()
