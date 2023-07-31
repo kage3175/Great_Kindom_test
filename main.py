@@ -51,7 +51,7 @@ def send(sock):
         try:
             sendData = input(">>>")
             sock.send(sendData.encode('utf-8'))
-        except socket.timeout:
+        except TimeoutError:
             continue
 
 
