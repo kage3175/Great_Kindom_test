@@ -155,14 +155,15 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     print('x')
     clientSock.connect((ip_address, port))
     connectionSock = clientSock
-    sender = threading.Thread(target = send, args = (clientSock, ))
-    receiver = threading.Thread(target = receive, args = (clientSock, ))
+    stop_event=threading.Event()
+    sender = threading.Thread(target = send, args = (clientSock, stop_event))
+    receiver = threading.Thread(target = receive, args = (clientSock, stop_event))
 
     sender.start()
     receiver.start()
     window.destroy()
     is_host = False
-    main_game()
+    main_game(stop_event)
 
 def waiting_window(port_num, my_ip, stop_event):
     '''def check_stop_event():
