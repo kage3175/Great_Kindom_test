@@ -288,7 +288,8 @@ def make_cluster(start, end):
                 break
         if flag:
             clusters_black_house.append(cluster)
-            clusters_blank.remove(cluster)
+    for cluster in clusters_black_house:
+        clusters_blank.remove(cluster)
     for cluster in clusters_blank: ### check if black house
         flag = True
         for (x, y) in cluster:
@@ -301,7 +302,8 @@ def make_cluster(start, end):
                 break
         if flag:
             clusters_white_house.append(cluster)
-            clusters_blank.remove(cluster)
+    for cluster in clusters_white_house:
+        clusters_blank.remove(cluster)
     for i in range(start, end):
         for j in range(start, end):
             mark_cluster[i][j] = True
