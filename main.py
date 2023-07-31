@@ -137,11 +137,12 @@ def client_setting_window(window):
     new_window.mainloop()
 
 def client_check_valid_ip(window, entry_ip, entry_port):
-    global clientSock, sender, receiver
+    global clientSock, sender, receiver, connectionSock
     ip_address = entry_ip.get()
     port = int(entry_port.get())
     print('x')
     clientSock.connect((ip_address, port))
+    connectionSock = clientSock
     sender = threading.Thread(target = send, args = (clientSock, ))
     receiver = threading.Thread(target = receive, args = (clientSock, ))
 
