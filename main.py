@@ -34,7 +34,8 @@ clusters_black_house = []
 clusters_white_house = []
 clusters_blank = []
 
-is_host = 0
+is_host = True
+running = True
 
 serverSock = socket(AF_INET, SOCK_STREAM)
 clientSock = socket(AF_INET, SOCK_STREAM)
@@ -43,18 +44,21 @@ receiver = ''
 connectionSock = None
 
 def send(sock):
-    while True:
+    global running
+    while running:
         sendData = input(">>>")
         sock.send(sendData.encode('utf-8'))
 
 def receive(sock):
-    while True:
+    global running
+    while running:
         recvData = sock.recv(1024)
         print("상대방:", recvData.decode('utf-8'))
 
 def main_game():
-    global connectionSock, receiver, sender
+    global connectionSock, receiver, sender, is_host, running
     pygame.init()
+    running = True
     screen=pygame.display.set_mode((800,720))
     pygame.display.set_caption('Great Kingdom')
 
@@ -69,7 +73,12 @@ def main_game():
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
+                running = False
                 pygame.quit()
+                if is_host:
+                    serverSock.close()
+                else:
+                    clientSock.close()
                 sys.exit()
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position=pygame.mouse.get_pos()
@@ -137,7 +146,7 @@ def client_setting_window(window):
     new_window.mainloop()
 
 def client_check_valid_ip(window, entry_ip, entry_port):
-    global clientSock, sender, receiver, connectionSock
+    global clientSock, sender, receiver, connectionSock, is_host
     ip_address = entry_ip.get()
     port = int(entry_port.get())
     print('x')
@@ -149,6 +158,7 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     sender.start()
     receiver.start()
     window.destroy()
+    is_host = False
     main_game()
 
 def waiting_window(port_num, my_ip, stop_event):
@@ -193,12 +203,11 @@ def waiting_for_access(window, entry):
     print(3)
     time.sleep(0.1)
     stop_event.set()
-    is_host = 0
+    is_host = True
     sender = threading.Thread(target = send, args = (connectionSock, ))
     receiver = threading.Thread(target = receive, args = (connectionSock, ))
     sender.start()
     receiver.start()
-    print(4)
     main_game()
 
 def backto_start_window(window):
