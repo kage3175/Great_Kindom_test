@@ -157,12 +157,10 @@ def main_game():
                 pygame.quit()
                 msg = 'Q QUIT_THE_GAME'
                 connectionSock.send(msg.encode('utf-8'))
-                print(1)
                 if is_host:
                     serverSock.close()
                 else:
                     clientSock.close()
-                print(2)
                 sys.exit()
             elif event.type==MOUSEBUTTONUP and event.button==1:
                 position = pygame.mouse.get_pos()
@@ -238,7 +236,6 @@ def make_cluster(start, end):
                         temp.append((x,y))
                         for k in range(4):
                             newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
-                            print(newx, newy)
                             if board[newx][newy] == 0 and mark_cluster[newx][newy]:
                                 queue.append((newx, newy))
                                 mark_cluster[newx][newy] = False
@@ -340,7 +337,6 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     global clientSock, connectionSock, is_host
     ip_address = entry_ip.get()
     port = int(entry_port.get())
-    print('x')
     clientSock.connect((ip_address, port))
     connectionSock = clientSock
     window.destroy()
