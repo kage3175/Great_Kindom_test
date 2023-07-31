@@ -157,6 +157,7 @@ def main_game():
                     if turn % 2 == my_stone % 2: # 내 턴인 경우
                         for i in range(9):
                             for j in range(9):
+                                print(position)
                                 if (posx >= (round(LEFT_GRID[0]+GAP_GRID[0]*i) - POS_CATCH) and posx <= (round(LEFT_GRID[0]+GAP_GRID[0]*i) + POS_CATCH)) and (posy >= (round(LEFT_GRID[1]+GAP_GRID[1]*j) - POS_CATCH) and posy <= (round(LEFT_GRID[1]+GAP_GRID[1]*j) + POS_CATCH)): #i, j의 인식 범위를 누른 경우
                                     print(i+1, j+1)
                                     if check_valid_pos(i+1, j+1, turn, op_stone):
@@ -223,6 +224,7 @@ def make_cluster(start, end):
                         temp.append((x,y))
                         for k in range(4):
                             newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
+                            print(newx, newy)
                             if board[newx][newy] == 0 and mark_cluster[newx][newy]:
                                 queue.append((newx, newy))
                                 mark_cluster[newx][newy] = False
