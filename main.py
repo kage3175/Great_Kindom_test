@@ -40,12 +40,28 @@ running = True
 serverSock = socket(AF_INET, SOCK_STREAM)
 clientSock = socket(AF_INET, SOCK_STREAM)
 connectionSock = None
+content = None
 
 def opponent_leaved(): ### 작업해야함
     print('out')
 
+def receive(sock):
+    global content
+    while True:
+        recvData = sock.recv(1024)
+        line = recvData.decode('utf-8')
+        words = list(line.split())
+        if words[0] == 'q' or words[0] == 'Q':
+            msg = 'Q 1'
+            sock.send(msg.encode('utf-8'))
+            return
+        else:
+            content = line
+            print(line)
+        print("상대방:", recvData.decode('utf-8'))
+
 def main_game():
-    global connectionSock, is_host, running, opponent_out
+    global connectionSock, is_host, running, content
     pygame.init()
     my_stone = 1
     running = True
@@ -83,6 +99,9 @@ def main_game():
             my_stone = 1
 
     turn = 1
+    receiver = threading.Thread(target=receive, args = (connectionSock,))
+    receiver.start()
+    content = None
 
     while True:
         for event in pygame.event.get():
@@ -114,9 +133,9 @@ def main_game():
         for i in range(9):
             screen.blit(imgBlackStone, (round(LEFT_TOP[0]+GAP[0]*(i-1)), round(LEFT_TOP[1]+GAP[1]*(i-1))))
         pygame.display.flip()
-        if turn % 2 != my_stone % 2:
-            recvData = connectionSock.recv(1024)
-            print('opponent: ' + recvData.decode('utf-8'))
+        if turn % 2 != my_stone % 2 and content != None:
+            print('opponent: ' + content)
+            content = None
             turn+=1
             waste = pygame.mouse.get_pos()
         time.sleep(0.1)
