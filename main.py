@@ -153,7 +153,7 @@ def main_game():
             elif event.type==MOUSEBUTTONUP and event.button==1:
                 position = pygame.mouse.get_pos()
                 posx, posy = int(position[0]), int(position[1])
-                if (posx >= (124 - POS_CATCH) and posx <= 562) and (posy >= (121 - POS_CATCH) and posy <= 561):
+                if (posx >= (LEFT_GRID[0] - POS_CATCH) and posx <= 558) and (posy >= (LEFT_GRID[1] - POS_CATCH) and posy <= 555):
                     if turn % 2 == my_stone % 2: # 내 턴인 경우
                         for i in range(9):
                             for j in range(9):
