@@ -179,6 +179,7 @@ def main_game():
                                         turn += 1
                                     else:
                                         print('not valid point')
+                                        print(clusters_black_house, clusters_white_house)
                         '''msg = 'c ' + str(posx) + " " + str(posy)
                         connectionSock.send(msg.encode('utf-8'))
                         print(position)
