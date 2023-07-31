@@ -272,11 +272,15 @@ def make_cluster(start, end):
                                 mark_cluster[newx][newy] = False
                     clusters_white.append(temp)
     flag = True
+    print(clusters_blank)
     for cluster in clusters_blank: ### check if black house
         flag = True
+        print(cluster)
         for (x, y) in cluster:
             for k in range(4):
                 newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
+                if x==3 and y==1:
+                    print(board[newx][newy])
                 if board[newx][newy] == 2:
                     flag = False
                     break
