@@ -42,27 +42,34 @@ clientSock = socket(AF_INET, SOCK_STREAM)
 sender = ''
 receiver = ''
 connectionSock = None
+opponent_out = False
 
-def send(sock, stop_event):
+def send(sock):
     global running
-    while running and not stop_event.is_set():
+    sock.settimeout(1.0)
+    while running:
         try:
             sendData = input(">>>")
             sock.send(sendData.encode('utf-8'))
-        except ConnectionResetError:
-            return
+        except socket.timeout:
+            continue
 
-def receive(sock, stop_event):
-    global running
-    while running and not stop_event.is_set():
-        try:
-            recvData = sock.recv(1024)
-            print("상대방:", recvData.decode('utf-8'))
-        except ConnectionResetError:
-            return
 
-def main_game(stop_event):
-    global connectionSock, receiver, sender, is_host, running
+def receive(sock):
+    global running, opponent_out
+    while running:
+        recvData = sock.recv(1024)
+        msg = recvData.decode('utf-8')
+        if msg == 'Q QUIT_THE_GAME':
+            opponent_out = True
+            break
+        print("상대방:", recvData.decode('utf-8'))
+
+def opponent_leaved(): ### 작업해야함
+    print('out')
+
+def main_game():
+    global connectionSock, receiver, sender, is_host, running, opponent_out
     pygame.init()
     running = True
     screen=pygame.display.set_mode((800,720))
@@ -76,26 +83,34 @@ def main_game(stop_event):
     imgWhiteStone = pygame.image.load('./img/white_stone.png')
     lst_imgBlackStone = []
 
+    if opponent_out:
+        opponent_leaved()
+        running = False
+        msg = 'Q QUIT_THE_GAME'
+        connectionSock.send(msg.encode('utf-8'))
+        pygame.quit()
+        return
+
     while True:
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
-                stop_event.set()
-                print(1)
                 pygame.quit()
-                print(1)
-                sender.join(timeout = 1)
-                receiver.join(timeout = 1)
+                sender.join()
+                receiver.join()
+                msg = 'Q QUIT_THE_GAME'
+                connectionSock.send(msg.encode('utf-8'))
                 print(1)
                 if is_host:
                     serverSock.close()
                 else:
                     clientSock.close()
-                print(1)
+                print(2)
                 sys.exit()
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position=pygame.mouse.get_pos()
-                msg = str(position[0]) + " " + str(position[1])
+                msg = 'c ' + str(position[0]) + " " + str(position[1])
                 connectionSock.send(msg.encode('utf-8'))
                 print(position)
         screen.fill((255,255,255))
@@ -165,15 +180,14 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     print('x')
     clientSock.connect((ip_address, port))
     connectionSock = clientSock
-    stop_event=threading.Event()
-    sender = threading.Thread(target = send, args = (clientSock, stop_event))
-    receiver = threading.Thread(target = receive, args = (clientSock, stop_event))
+    sender = threading.Thread(target = send, args = (clientSock,))
+    receiver = threading.Thread(target = receive, args = (clientSock,))
 
     sender.start()
     receiver.start()
     window.destroy()
     is_host = False
-    main_game(stop_event)
+    main_game()
 
 def waiting_window(port_num, my_ip, stop_event):
     '''def check_stop_event():
@@ -218,12 +232,11 @@ def waiting_for_access(window, entry):
     time.sleep(0.1)
     stop_event.set()
     is_host = True
-    new_stop_event = threading.Event()
-    sender = threading.Thread(target = send, args = (connectionSock, new_stop_event))
-    receiver = threading.Thread(target = receive, args = (connectionSock, new_stop_event))
+    sender = threading.Thread(target = send, args = (connectionSock,))
+    receiver = threading.Thread(target = receive, args = (connectionSock,))
     sender.start()
     receiver.start()
-    main_game(new_stop_event)
+    main_game()
 
 def backto_start_window(window):
     window.destroy()
