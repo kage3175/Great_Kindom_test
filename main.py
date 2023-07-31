@@ -39,39 +39,19 @@ running = True
 
 serverSock = socket(AF_INET, SOCK_STREAM)
 clientSock = socket(AF_INET, SOCK_STREAM)
-sender = ''
-receiver = ''
 connectionSock = None
-opponent_out = False
-
-def send(sock):
-    global running
-    while running:
-        sendData = input(">>>")
-        sock.send(sendData.encode('utf-8'))
-
-
-
-def receive(sock):
-    global running, opponent_out
-    while running:
-        recvData = sock.recv(1024)
-        msg = recvData.decode('utf-8')
-        if msg == 'Q QUIT_THE_GAME':
-            opponent_out = True
-            print('ooo')
-            break
-        print("상대방:", recvData.decode('utf-8'))
 
 def opponent_leaved(): ### 작업해야함
     print('out')
 
 def main_game():
-    global connectionSock, receiver, sender, is_host, running, opponent_out
+    global connectionSock, is_host, running, opponent_out
     pygame.init()
+    my_stone = 1
     running = True
     screen=pygame.display.set_mode((800,720))
     pygame.display.set_caption('Great Kingdom')
+    whose_black = True
 
     fps=10 #프레임이 높을 필요가 없기 때문에 프레임은 10으로 설정하였다. 낮은 사양의 컴퓨터에서는 이를 5 정도로 낮춰서 사용해도 문제가 없다.
     fpsClock=pygame.time.Clock()
@@ -81,15 +61,28 @@ def main_game():
     imgWhiteStone = pygame.image.load('./img/white_stone.png')
     lst_imgBlackStone = []
 
-    if opponent_out:
-        opponent_leaved()
-        running = False
-        sender.join()
-        receiver.join()
-        msg = 'Q QUIT_THE_GAME'
+    ### my_stone 1
+    
+    if is_host:
+        if random.random() > 0.5:
+            whose_black = False
+            my_stone = 2
+            msg = 'w white'
+        else:
+            whose_black = True
+            my_stone = 1
+            msg = 'w black'
+        print(msg)
         connectionSock.send(msg.encode('utf-8'))
-        pygame.quit()
-        return
+    else:
+        recvData = connectionSock.recv(1024)
+        if recvData.decode('utf-8') == 'w black':
+            print(2)
+            my_stone = 2
+        else:
+            my_stone = 1
+
+    turn = 1
 
     while True:
 
@@ -97,8 +90,6 @@ def main_game():
             if event.type == QUIT:
                 running = False
                 pygame.quit()
-                sender.join()
-                receiver.join()
                 msg = 'Q QUIT_THE_GAME'
                 connectionSock.send(msg.encode('utf-8'))
                 print(1)
@@ -109,10 +100,16 @@ def main_game():
                 print(2)
                 sys.exit()
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
-                position=pygame.mouse.get_pos()
-                msg = 'c ' + str(position[0]) + " " + str(position[1])
-                connectionSock.send(msg.encode('utf-8'))
-                print(position)
+                if turn % 2 == my_stone % 2: # 내 턴인 경우
+                    position=pygame.mouse.get_pos()
+                    msg = 'c ' + str(position[0]) + " " + str(position[1])
+                    connectionSock.send(msg.encode('utf-8'))
+                    print(position)
+                    turn += 1
+                else:
+                    turn += 1
+                    recvData = connectionSock.recv(1024)
+                    print('opponent: '+recvData.decode('utf-8'))
         screen.fill((255,255,255))
         screen.blit(imgBoard, (52,49))
         '''screen.blit(imgBlackStone, imgBlackStone_RectObj)
@@ -174,17 +171,12 @@ def client_setting_window(window):
     new_window.mainloop()
 
 def client_check_valid_ip(window, entry_ip, entry_port):
-    global clientSock, sender, receiver, connectionSock, is_host
+    global clientSock, connectionSock, is_host
     ip_address = entry_ip.get()
     port = int(entry_port.get())
     print('x')
     clientSock.connect((ip_address, port))
     connectionSock = clientSock
-    sender = threading.Thread(target = send, args = (clientSock,))
-    receiver = threading.Thread(target = receive, args = (clientSock,))
-
-    sender.start()
-    receiver.start()
     window.destroy()
     is_host = False
     main_game()
@@ -214,8 +206,6 @@ def waiting_window(port_num, my_ip, stop_event):
 
 def waiting_for_access(window, entry):
     global serverSock
-    global sender
-    global receiver
     global connectionSock
     port_num = int(entry.get())
     print(port_num)
@@ -232,10 +222,6 @@ def waiting_for_access(window, entry):
     time.sleep(0.1)
     stop_event.set()
     is_host = True
-    sender = threading.Thread(target = send, args = (connectionSock,))
-    receiver = threading.Thread(target = receive, args = (connectionSock,))
-    sender.start()
-    receiver.start()
     main_game()
 
 def backto_start_window(window):
