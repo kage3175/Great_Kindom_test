@@ -208,6 +208,7 @@ def main_game():
                 lst_words = list(content.split())
                 x, y = int(lst_words[1]), int(lst_words[2])
                 board[x][y] = op_stone
+                make_cluster()
             elif content[0] == 'r' or content[0] == 'R': #상대방이 기권한 경우
                 you_win()
             elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우
