@@ -150,7 +150,7 @@ def main_game():
                     clientSock.close()
                 print(2)
                 sys.exit()
-            elif event.type==MOUSEBUTTONDOWN and event.button==1:
+            elif event.type==MOUSEBUTTONUP and event.button==1:
                 position = pygame.mouse.get_pos()
                 posx, posy = int(position[0]), int(position[1])
                 if (posx >= (124 - POS_CATCH) and posx <= 562) and (posy >= (121 - POS_CATCH) and posy <= 561):
