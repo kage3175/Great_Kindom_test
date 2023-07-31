@@ -62,6 +62,7 @@ def receive(sock):
         msg = recvData.decode('utf-8')
         if msg == 'Q QUIT_THE_GAME':
             opponent_out = True
+            print('ooo')
             break
         print("상대방:", recvData.decode('utf-8'))
 
