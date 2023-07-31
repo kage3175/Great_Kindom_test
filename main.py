@@ -46,14 +46,20 @@ connectionSock = None
 def send(sock, stop_event):
     global running
     while running and not stop_event.is_set():
-        sendData = input(">>>")
-        sock.send(sendData.encode('utf-8'))
+        try:
+            sendData = input(">>>")
+            sock.send(sendData.encode('utf-8'))
+        except ConnectionResetError:
+            return
 
 def receive(sock, stop_event):
     global running
     while running and not stop_event.is_set():
-        recvData = sock.recv(1024)
-        print("상대방:", recvData.decode('utf-8'))
+        try:
+            recvData = sock.recv(1024)
+            print("상대방:", recvData.decode('utf-8'))
+        except ConnectionResetError:
+            return
 
 def main_game(stop_event):
     global connectionSock, receiver, sender, is_host, running
