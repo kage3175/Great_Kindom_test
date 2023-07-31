@@ -177,6 +177,8 @@ def main_game():
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
                                         turn += 1
+                                    else:
+                                        print('not valid point')
                         '''msg = 'c ' + str(posx) + " " + str(posy)
                         connectionSock.send(msg.encode('utf-8'))
                         print(position)
