@@ -86,6 +86,7 @@ def accept_counting(): #작업해야하는거
 def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank
     make_cluster(1, BOARD_SIZE+1)
+    print(clusters_black_house, clusters_white_house, clusters_blank)
     if board[i][j] != 0:
         return False
     else:
@@ -180,7 +181,6 @@ def main_game():
                                         turn += 1
                                     else:
                                         print('not valid point')
-                                        print(clusters_black_house, clusters_white_house, clusters_blank)
                         '''msg = 'c ' + str(posx) + " " + str(posy)
                         connectionSock.send(msg.encode('utf-8'))
                         print(position)
@@ -273,6 +273,8 @@ def make_cluster(start, end):
                 if board[newx][newy] == 2:
                     flag = False
                     break
+            if not flag:
+                break
         if flag:
             clusters_black_house.append(cluster)
             clusters_blank.remove(cluster)
@@ -284,6 +286,8 @@ def make_cluster(start, end):
                 if board[newx][newy] == 1:
                     flag = False
                     break
+            if not flag:
+                break
         if flag:
             clusters_white_house.append(cluster)
             clusters_blank.remove(cluster)
