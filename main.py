@@ -228,6 +228,9 @@ def make_cluster(start, end):
     clusters_white_house = []
     clusters_blank = []
     clusters_neutral = []
+    for i in range(11):
+        for j in range(11):
+            print(board[i][j])
     for i in range(start, end):
         for j in range(start, end):
             if mark_cluster[i][j]:
