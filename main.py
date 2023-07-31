@@ -153,11 +153,11 @@ def main_game():
             elif event.type==MOUSEBUTTONUP and event.button==1:
                 position = pygame.mouse.get_pos()
                 posx, posy = int(position[0]), int(position[1])
+                print(position)
                 if (posx >= (LEFT_GRID[0] - POS_CATCH) and posx <= 558) and (posy >= (LEFT_GRID[1] - POS_CATCH) and posy <= 555):
                     if turn % 2 == my_stone % 2: # 내 턴인 경우
                         for i in range(9):
                             for j in range(9):
-                                print(position)
                                 if (posx >= (round(LEFT_GRID[0]+GAP_GRID[0]*i) - POS_CATCH) and posx <= (round(LEFT_GRID[0]+GAP_GRID[0]*i) + POS_CATCH)) and (posy >= (round(LEFT_GRID[1]+GAP_GRID[1]*j) - POS_CATCH) and posy <= (round(LEFT_GRID[1]+GAP_GRID[1]*j) + POS_CATCH)): #i, j의 인식 범위를 누른 경우
                                     print(i+1, j+1)
                                     if check_valid_pos(i+1, j+1, turn, op_stone):
