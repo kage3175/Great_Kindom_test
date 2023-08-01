@@ -77,7 +77,6 @@ def receive(sock):
             return
         else:
             content = line
-            print(line)
 
 def you_win(): #작업해야 하는 거
     print('you win')
@@ -175,7 +174,6 @@ def is_caught(blackorwhite):
 def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank
     make_cluster(1, BOARD_SIZE+1)
-    print(clusters_black_house, clusters_white_house, clusters_blank)
     if board[i][j] != 0:
         return False
     else:
@@ -229,12 +227,10 @@ def main_game():
             op_stone = 2
             textSurfaceObj1 = fontObj.render('Black', True, (0,0,0))
             msg = 'w black'
-        print(msg)
         connectionSock.send(msg.encode('utf-8'))
     else:
         recvData = connectionSock.recv(1024)
         if recvData.decode('utf-8') == 'w black':
-            print(2)
             my_stone = 2
             op_stone = 1
             textSurfaceObj1 = fontObj.render('White', True, (0,0,0))
@@ -268,13 +264,11 @@ def main_game():
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position = pygame.mouse.get_pos()
                 posx, posy = int(position[0]), int(position[1])
-                print(position)
                 if (posx >= (LEFT_GRID[0] - POS_CATCH) and posx <= 558) and (posy >= (LEFT_GRID[1] - POS_CATCH) and posy <= 555): # 판 위를 클릭한 경우
                     if turn % 2 == my_stone % 2: # 내 턴인 경우
                         for i in range(9):
                             for j in range(9):
                                 if (posx >= (round(LEFT_GRID[0]+GAP_GRID[0]*i) - POS_CATCH) and posx <= (round(LEFT_GRID[0]+GAP_GRID[0]*i) + POS_CATCH)) and (posy >= (round(LEFT_GRID[1]+GAP_GRID[1]*j) - POS_CATCH) and posy <= (round(LEFT_GRID[1]+GAP_GRID[1]*j) + POS_CATCH)): #i, j의 인식 범위를 누른 경우
-                                    print(i+1, j+1)
                                     if check_valid_pos(i+1, j+1, turn, op_stone):
                                         board[i+1][j+1] = my_stone
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
@@ -284,11 +278,6 @@ def main_game():
                                         turn += 1
                                     else:
                                         print('not valid point')
-
-                        '''msg = 'c ' + str(posx) + " " + str(posy)
-                        connectionSock.send(msg.encode('utf-8'))
-                        print(position)
-                        turn += 1'''
                     else:
                         continue
                 if (posx >= 97 and posx <= 283) and (posy >= 603 and posy <= 696): # 기권하기 버튼을 누른 경우
@@ -313,6 +302,7 @@ def main_game():
                     screen.blit(imgNeutral, (posx, posy))
         screen.blit(imgResignButton, (95, 600))
         screen.blit(imgCountRequestButton, (350, 600))
+        screen.blit(textSurfaceObj1, textRectObj1)
                 
         pygame.display.flip()
         if content != None: # 상대방이 둔 수를 받는 경우
@@ -337,6 +327,7 @@ def main_game():
             content = None
             waste = pygame.mouse.get_pos()
         time.sleep(0.1)
+############################################################################# End of main
 
 def make_cluster(start, end):
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank, board, mark_cluster
@@ -346,10 +337,6 @@ def make_cluster(start, end):
     clusters_white_house = []
     clusters_blank = []
     clusters_neutral = []
-    for i in range(11):
-        for j in range(11):
-            print(board[i][j], end = ' ')
-        print()
     for i in range(start, end):
         for j in range(start, end):
             if mark_cluster[i][j]:
@@ -364,8 +351,6 @@ def make_cluster(start, end):
                         for k in range(4):
                             newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
                             if board[newx][newy] == 0 and mark_cluster[newx][newy]:
-                                if newx == 1 and newy == 4:
-                                    print("hmm")
                                 queue.append((newx, newy))
                                 mark_cluster[newx][newy] = False
                     clusters_blank.append(temp)
@@ -390,16 +375,12 @@ def make_cluster(start, end):
                                 mark_cluster[newx][newy] = False
                     clusters_white.append(temp)
     flag = True
-    print(clusters_blank)
     for cluster in clusters_blank: ### check if black house
         flag = True
-        print(cluster)
         for (x, y) in cluster:
             for k in range(4):
                 newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
                 if x==3 and y==1:
-                    print(board[newx][newy])
-                if board[newx][newy] == 2:
                     flag = False
                     break
             if not flag:
