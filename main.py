@@ -175,17 +175,19 @@ def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank
     make_cluster(1, BOARD_SIZE+1)
     if board[i][j] != 0:
+        print('not blank')
         return False
     else:
-        
         if turn >= 4:
             if not_valid_house == 1: #상대방 돌이 흑이면, 내가 둔 곳이 흑 집 클러스터 내부인지 확인
                 for cluster in clusters_black_house:
                     if (i, j) in cluster:
+                        print('black house')
                         return False
             else:
                 for cluster in clusters_white_house:
                     if (i, j) in cluster:
+                        print('white house')
                         return False
     return True
 
@@ -504,7 +506,6 @@ def waiting_for_access(window, entry):
     tk_thread = threading.Thread(target = waiting_window, args=(port_num, my_ip, stop_event))
     tk_thread.start()
     connectionSock, addr = serverSock.accept()
-    print(3)
     time.sleep(0.1)
     stop_event.set()
     is_host = True
