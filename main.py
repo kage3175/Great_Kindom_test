@@ -388,7 +388,7 @@ def make_cluster(start, end):
         for (x, y) in cluster:
             for k in range(4):
                 newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
-                if x==3 and y==1:
+                if board[newx][newy] == 2:
                     flag = False
                     break
             if not flag:
@@ -397,7 +397,7 @@ def make_cluster(start, end):
             clusters_black_house.append(cluster)
     for cluster in clusters_black_house:
         clusters_blank.remove(cluster)
-    for cluster in clusters_blank: ### check if black house
+    for cluster in clusters_blank: ### check if white house
         flag = True
         for (x, y) in cluster:
             for k in range(4):
