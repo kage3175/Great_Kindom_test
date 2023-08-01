@@ -118,6 +118,8 @@ def main_game():
     imgBlackStone = pygame.image.load('./img/black_stone.png')
     imgWhiteStone = pygame.image.load('./img/white_stone.png')
     imgNeutral = pygame.image.load('./img/neutral.png')
+    imgResignButton = pygame.image.load('./img/resign_button.png')
+    imgCountRequestButton = pygame.image.load('./img/counting_request_button.png')
     lst_imgBlackStone = []
 
     ### my_stone 1
@@ -200,6 +202,8 @@ def main_game():
                     screen.blit(imgWhiteStone, (posx, posy))
                 elif board[i+1][j+1] == 3:
                     screen.blit(imgNeutral, (posx, posy))
+        screen.blit(imgResignButton, (100, 650))
+        screen.blit(imgCountRequestButton, (300, 650))
                 
         pygame.display.flip()
         if turn % 2 != my_stone % 2 and content != None: # 상대방이 둔 수를 받는 경우
