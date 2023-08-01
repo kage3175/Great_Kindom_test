@@ -279,6 +279,9 @@ def main_game():
                                             you_win()
                                         turn += 1
                                     else:
+                                        print('blank: ', clusters_blank)
+                                        print('black: ', clusters_black_house)
+                                        print('white: ', clusters_white_house)
                                         print('not valid point')
                     else:
                         continue
@@ -313,6 +316,9 @@ def main_game():
                 lst_words = list(content.split())
                 x, y = int(lst_words[1]), int(lst_words[2])
                 board[x][y] = op_stone
+                print('blank: ', clusters_blank)
+                print('black: ', clusters_black_house)
+                print('white: ', clusters_white_house)
                 if is_caught(my_stone):
                     opponent_win()
                 turn+=1
