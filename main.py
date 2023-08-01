@@ -183,6 +183,7 @@ def main_game():
                                         turn += 1
                                     else:
                                         print('not valid point')
+
                         '''msg = 'c ' + str(posx) + " " + str(posy)
                         connectionSock.send(msg.encode('utf-8'))
                         print(position)
@@ -202,8 +203,8 @@ def main_game():
                     screen.blit(imgWhiteStone, (posx, posy))
                 elif board[i+1][j+1] == 3:
                     screen.blit(imgNeutral, (posx, posy))
-        screen.blit(imgResignButton, (100, 650))
-        screen.blit(imgCountRequestButton, (300, 650))
+        screen.blit(imgResignButton, (100, 600))
+        screen.blit(imgCountRequestButton, (360, 600))
                 
         pygame.display.flip()
         if turn % 2 != my_stone % 2 and content != None: # 상대방이 둔 수를 받는 경우
