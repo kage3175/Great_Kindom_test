@@ -14,7 +14,16 @@ fpsClock=pygame.time.Clock()
 imgBoard = pygame.image.load('./img/board.png')
 imgBlackStone = pygame.image.load('./img/black_stone.png')
 imgWhiteStone = pygame.image.load('./img/white_stone.png')
+imgNeutral = pygame.image.load('./img/neutral.png')
+imgResignButton = pygame.image.load('./img/resign_button.png')
+imgCountRequestButton = pygame.image.load('./img/counting_request_button.png')
+fontObj = pygame.font.Font(None, 50)
+text_my = 'balck'
+textSurfaceObj1 = fontObj.render(text_my, True, (0,0,0))
+textRectObj1=textSurfaceObj1.get_rect()
+textRectObj1.center =(680,76)
 lst_imgBlackStone = []
+text_my = 'white'
 
 while True:
     for event in pygame.event.get():
@@ -26,8 +35,7 @@ while True:
             print(position)
     screen.fill((255,255,255))
     screen.blit(imgBoard, (52,49))
-    '''screen.blit(imgBlackStone, imgBlackStone_RectObj)
-    screen.blit(imgWhiteStone, imgWhiteStone_RectObj)'''
-    '''for i in range(9):
-        screen.blit(imgBlackStone, (round(LEFT_TOP[0]+SPACE[0]*(i-1)), round(LEFT_TOP[1]+SPACE[1]*(i-1))))'''
+    screen.blit(imgResignButton, (95, 600))
+    screen.blit(imgCountRequestButton, (350, 600))
+    screen.blit(textSurfaceObj1, textRectObj1)
     pygame.display.flip()

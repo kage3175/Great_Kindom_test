@@ -21,6 +21,7 @@ LEFT_TOP = [124, 121]
 GAP = [54.8,55]
 LEFT_GRID = [93, 89]
 GAP_GRID = [55.625, 55.75]
+OMAKE = 3
 
 ### Pygame 관련 전역변수들
 FPS = 30
@@ -46,6 +47,7 @@ serverSock = socket(AF_INET, SOCK_STREAM)
 clientSock = socket(AF_INET, SOCK_STREAM)
 connectionSock = None
 content = None
+accept_count = True
 
 def clear_board():
     global board
@@ -80,8 +82,95 @@ def receive(sock):
 def you_win(): #작업해야 하는 거
     print('you win')
 
-def accept_counting(): #작업해야하는거
-    print('wow')
+def opponent_win(): #작업해야 하는 거
+    print('TT')
+
+def request_counting(): #작업해야하는거
+    window = Tk()
+    window.title('Opponent\'s request for counting')
+    frm=Frame(window, width=345, height=130, bg='gray50')
+    '''frm=Frame(window, width=340, height=250, bg='black')'''
+    frm.pack()
+    text_notice = Label(window, text='Opponent requested for the counting', bg='gray50', fg='white', font=('Helvetica', 14))
+    text_notice.place(x= 12, y= 10)
+    select_host = Button(window, text = "    Accept    ", height = 2, width = 13, font=('Helvetica', 14), command = lambda: accept_count(window))
+    select_host.place(x = 10, y = 50)
+    select_client = Button(window, text = "    Refuse    ", height = 2, width = 13, font=('Helvetica', 14), command = quit)
+    select_client.place(x = 182, y = 50)
+    window.mainloop()
+
+def accept_counting(win):
+    win.destroy()
+    accept_count = True
+def refuse_counting(win):
+    win.destroy()
+    accept_count = False
+
+def counting_house():
+    global clusters_white_house, clusters_black_house
+    cnt_white, cnt_black = 0, 0
+    for cluster in clusters_white_house:
+        for house in cluster:
+            cnt_white+=1
+    for cluster in clusters_black_house:
+        for house in cluster:
+            cnt_black+=1
+    return cnt_black, cnt_white
+
+def winneris(blackhouse, whitehouse):
+    window = Tk()
+    window.title('Result')
+    frm=Frame(window, width=140, height=190, bg='gray89')
+    '''frm=Frame(window, width=340, height=250, bg='black')'''
+    frm.pack()
+    text_black = Label(window, text='Black house: ' + str(blackhouse), bg='gray89', fg='black', font=('Helvetica', 12))
+    text_black.place(x= 12, y= 10)
+    text_white = Label(window, text='White house: ' + str(whitehouse), bg='gray89', fg='black', font=('Helvetica', 12))
+    text_white.place(x= 12, y= 35)
+    if blackhouse >= whitehouse + 3:
+        text_whowin = Label(window, text='Black wins!', bg='gray89', fg='black', font=('Helvetica', 15))
+    else:
+        text_whowin = Label(window, text='White wins!', bg='gray89', fg='black', font=('Helvetica', 15))
+    text_whowin.place(x=12, y= 70)
+    '''select_host = Button(window, text = "    Accept    ", height = 2, width = 13, font=('Helvetica', 14), command = quit)
+    select_host.place(x = 10, y = 50)
+    select_client = Button(window, text = "    Refuse    ", height = 2, width = 13, font=('Helvetica', 14), command = quit)
+    select_client.place(x = 182, y = 50)'''
+    select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, font=('Helvetica', 14), command = quit)
+    select_OK.place(x = 11, y = 120)
+    window.mainloop()
+
+def is_caught(blackorwhite):
+    global clusters_black, clusters_white
+    caught = True
+    if blackorwhite == 1:
+        for cluster in clusters_black:
+            caught = True
+            for (x, y) in cluster:
+                for k in range(4):
+                    newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
+                    if board[newx][newy] == 0:
+                        caught = False
+                        break
+            if caught:
+                clusters_black.remove(cluster)
+                clusters_blank.append(cluster)
+                return True
+    else:
+        for cluster in clusters_white:
+            caught = True
+            for (x, y) in cluster:
+                for k in range(4):
+                    newx, newy = x+THECROSS[k][0], y+THECROSS[k][1]
+                    if board[newx][newy] == 0:
+                        caught = False
+                        break
+            if caught:
+                clusters_white.remove(cluster)
+                clusters_blank.append(cluster)
+                return True
+    return False
+
 
 def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank
@@ -120,7 +209,10 @@ def main_game():
     imgNeutral = pygame.image.load('./img/neutral.png')
     imgResignButton = pygame.image.load('./img/resign_button.png')
     imgCountRequestButton = pygame.image.load('./img/counting_request_button.png')
-    lst_imgBlackStone = []
+
+    fontObj = pygame.font.Font(None, 50)
+    
+    
 
     ### my_stone 1
     
@@ -129,11 +221,13 @@ def main_game():
             whose_black = False
             my_stone = 2
             op_stone = 1
+            textSurfaceObj1 = fontObj.render('White', True, (0,0,0))
             msg = 'w white'
         else:
             whose_black = True
             my_stone = 1
             op_stone = 2
+            textSurfaceObj1 = fontObj.render('Black', True, (0,0,0))
             msg = 'w black'
         print(msg)
         connectionSock.send(msg.encode('utf-8'))
@@ -143,9 +237,14 @@ def main_game():
             print(2)
             my_stone = 2
             op_stone = 1
+            textSurfaceObj1 = fontObj.render('White', True, (0,0,0))
         else:
             my_stone = 1
             op_stone = 2
+            textSurfaceObj1 = fontObj.render('Black', True, (0,0,0))
+
+    textRectObj1=textSurfaceObj1.get_rect()
+    textRectObj1.center =(680,76)
 
     turn = 1
     receiver = threading.Thread(target=receive, args = (connectionSock,))
@@ -166,11 +265,11 @@ def main_game():
                 else:
                     clientSock.close()
                 sys.exit()
-            elif event.type==MOUSEBUTTONUP and event.button==1:
+            elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position = pygame.mouse.get_pos()
                 posx, posy = int(position[0]), int(position[1])
                 print(position)
-                if (posx >= (LEFT_GRID[0] - POS_CATCH) and posx <= 558) and (posy >= (LEFT_GRID[1] - POS_CATCH) and posy <= 555):
+                if (posx >= (LEFT_GRID[0] - POS_CATCH) and posx <= 558) and (posy >= (LEFT_GRID[1] - POS_CATCH) and posy <= 555): # 판 위를 클릭한 경우
                     if turn % 2 == my_stone % 2: # 내 턴인 경우
                         for i in range(9):
                             for j in range(9):
@@ -180,6 +279,8 @@ def main_game():
                                         board[i+1][j+1] = my_stone
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
+                                        if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우
+                                            you_win()
                                         turn += 1
                                     else:
                                         print('not valid point')
@@ -190,6 +291,13 @@ def main_game():
                         turn += 1'''
                     else:
                         continue
+                if (posx >= 97 and posx <= 283) and (posy >= 603 and posy <= 696): # 기권하기 버튼을 누른 경우
+                    msg = 'r I resign'
+                    connectionSock.send(msg.encode('utf-8'))
+                    opponent_win()
+                if (posx >= 353 and posx <= 540) and (posy >= 603 and posy <= 696): # 계가하기 버튼을 누른 경우
+                    msg = 'h I want Counting'
+                    connectionSock.send(msg.encode('utf-8'))
         screen.fill((255,255,255))
         screen.blit(imgBoard, (52,49))
         '''screen.blit(imgBlackStone, imgBlackStone_RectObj)
@@ -203,25 +311,30 @@ def main_game():
                     screen.blit(imgWhiteStone, (posx, posy))
                 elif board[i+1][j+1] == 3:
                     screen.blit(imgNeutral, (posx, posy))
-        screen.blit(imgResignButton, (100, 600))
-        screen.blit(imgCountRequestButton, (360, 600))
+        screen.blit(imgResignButton, (95, 600))
+        screen.blit(imgCountRequestButton, (350, 600))
                 
         pygame.display.flip()
-        if turn % 2 != my_stone % 2 and content != None: # 상대방이 둔 수를 받는 경우
+        if content != None: # 상대방이 둔 수를 받는 경우
             print('opponent: ' + content)
-            if content[0] == 'c' or content[0] == 'C':# #상대방이 좌표를 보낸 경우
+            if turn % 2 != my_stone % 2 and (content[0] == 'c' or content[0] == 'C'):# #상대방이 좌표를 보낸 경우
                 lst_words = list(content.split())
                 x, y = int(lst_words[1]), int(lst_words[2])
                 board[x][y] = op_stone
+                if is_caught(my_stone):
+                    opponent_win()
+                turn+=1
                 make_cluster(1, BOARD_SIZE+1)
             elif content[0] == 'r' or content[0] == 'R': #상대방이 기권한 경우
                 you_win()
             elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우
                 opponent_leaved()
             elif content[0] == 'h' or content[0] == 'H': #상대방이 계가를 요청한 경우
-                accept_counting()
+                request_counting()
+                if accept_count:
+                    black_house, white_house = counting_house()
+                    winneris(black_house, white_house)
             content = None
-            turn+=1
             waste = pygame.mouse.get_pos()
         time.sleep(0.1)
 
