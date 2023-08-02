@@ -47,6 +47,14 @@ def opponent_win(lose_code):
     select_OFF.place(x = 30, y = 76)
     window.mainloop()
     
+def wait_accept():
+    window = Tk()
+    window.title('You lose')
+    frm=Frame(window, width=298, height=90, bg='gray79')
+    frm.pack()
+    text1 = Label(window, text = "Waiting for Opponent's response...",bg='gray79', fg='black', font=('Helvetica', 12))
+    text1.place(x = 15, y = 30)
+    window.mainloop()
 
 '''window = Tk()
 window.title('Result')
@@ -67,4 +75,4 @@ select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, fon
 select_OK.place(x = 11, y = 120)
 window.mainloop()'''
 
-opponent_win('c')
+wait_accept()
