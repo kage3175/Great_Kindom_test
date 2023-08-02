@@ -354,7 +354,7 @@ def main_game():
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
                                         if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우, 게임이 끝나는 경우
-                                            blit_screen()
+                                            blit_screen(screen, lst_text)
                                             pygame.display.flip()
                                             send_signals('s')
                                             you_win('c')
@@ -403,7 +403,7 @@ def main_game():
                 print('black: ', clusters_black_house)
                 print('white: ', clusters_white_house)
                 if is_caught(my_stone): # 게임이 끝나는 경우
-                    blit_screen()
+                    blit_screen(screen, lst_text)
                     pygame.display.flip()
                     send_signals('s')
                     opponent_win('c')
