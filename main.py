@@ -391,7 +391,7 @@ def main_game():
                         sys.exit()
                     else: 
                         continue
-        blit_screen()
+        blit_screen(screen, lst_text)
         pygame.display.flip()
         if content != None: # 상대방이 둔 수를 받는 경우
             print('opponent: ' + content)
