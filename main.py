@@ -123,6 +123,8 @@ def opponent_win(lose_code):
     window.mainloop()
 
 def request_counting(): #작업해야하는거
+    global accept_count
+    accept_count = False
     window = Tk()
     window.title('Opponent\'s request for counting')
     frm=Frame(window, width=345, height=130, bg='gray50')
@@ -130,7 +132,7 @@ def request_counting(): #작업해야하는거
     frm.pack()
     text_notice = Label(window, text='Opponent requested for the counting', bg='gray50', fg='white', font=('Helvetica', 14))
     text_notice.place(x= 12, y= 10)
-    select_host = Button(window, text = "    Accept    ", height = 2, width = 13, font=('Helvetica', 14), command = lambda: accept_count(window))
+    select_host = Button(window, text = "    Accept    ", height = 2, width = 13, font=('Helvetica', 14), command = lambda: accept_counting(window))
     select_host.place(x = 10, y = 50)
     select_client = Button(window, text = "    Refuse    ", height = 2, width = 13, font=('Helvetica', 14), command = quit)
     select_client.place(x = 182, y = 50)
@@ -139,9 +141,18 @@ def request_counting(): #작업해야하는거
 def accept_counting(win):
     win.destroy()
     accept_count = True
-def refuse_counting(win):
-    win.destroy()
-    accept_count = False
+
+def wait_accept():
+    window = Tk()
+    window.title('You lose')
+    frm=Frame(window, width=298, height=90, bg='gray79')
+    frm.pack()
+    text1 = Label(window, text = "Waiting for Opponent's response...",bg='gray79', fg='black', font=('Helvetica', 12))
+    text1.place(x = 15, y = 30)
+    if content != None:
+        window.destroy()
+        return
+    window.mainloop()
 
 def counting_house():
     global clusters_white_house, clusters_black_house
@@ -208,6 +219,10 @@ def is_caught(blackorwhite):
                 return True
     return False
 
+def send_quit_msg():
+    global connectionSock
+    msg = 'Q I quit the game'
+    connectionSock.send(msg.encode('utf-8'))
 
 def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank
@@ -228,6 +243,14 @@ def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
                         print('white house')
                         return False
     return True
+
+def close_socket(is_host):
+    global serverSock, clientSock
+    if is_host:
+        serverSock.close()
+    else:
+        clientSock.close()
+        
 
 def main_game():
     global connectionSock, is_host, running, content, board, mark_cluster
@@ -286,6 +309,7 @@ def main_game():
     receiver = threading.Thread(target=receive, args = (connectionSock,))
     receiver.start()
     content = None
+    flag_waiting_accept = False
 
     clear_board()
 
@@ -294,12 +318,8 @@ def main_game():
             if event.type == QUIT:
                 running = False
                 pygame.quit()
-                msg = 'Q QUIT_THE_GAME'
-                connectionSock.send(msg.encode('utf-8'))
-                if is_host:
-                    serverSock.close()
-                else:
-                    clientSock.close()
+                send_quit_msg()
+                close_socket()
                 sys.exit()
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position = pygame.mouse.get_pos()
@@ -314,7 +334,11 @@ def main_game():
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
                                         if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우
+                                            send_quit_msg()
                                             you_win('c')
+                                            close_socket()
+                                            pygame.quit()
+                                            sys.exit()
                                         turn += 1
                                     else:
                                         print('blank: ', clusters_blank)
@@ -327,9 +351,21 @@ def main_game():
                     msg = 'r I resign'
                     connectionSock.send(msg.encode('utf-8'))
                     opponent_win('r')
+                    pygame.quit()
+                    close_socket()
+                    sys.exit()
                 if (posx >= 353 and posx <= 540) and (posy >= 603 and posy <= 696): # 계가하기 버튼을 누른 경우
                     msg = 'h I want Counting'
                     connectionSock.send(msg.encode('utf-8'))
+                    wait_accept()
+                    if content[0] == 'a' or content[0] == 'A': #상대가 수락한 경우
+                        black_house, white_house = counting_house()
+                        winneris(black_house, white_house)
+                        pygame.quit()
+                        close_socket()
+                        sys.exit()
+                    else: 
+                        continue
         screen.fill((255,255,255))
         screen.blit(imgBoard, (52,49))
         '''screen.blit(imgBlackStone, imgBlackStone_RectObj)
@@ -365,12 +401,23 @@ def main_game():
                 you_win('r')
             elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우
                 opponent_leaved()
-                
+                pygame.quit()
+                close_socket()
+                sys.exit()
             elif content[0] == 'h' or content[0] == 'H': #상대방이 계가를 요청한 경우
                 request_counting()
                 if accept_count:
+                    msg = 'a I accept your request'
+                    connectionSock.send(msg.encode('utf-8'))
                     black_house, white_house = counting_house()
                     winneris(black_house, white_house)
+                    accept_count = False
+                    pygame.quit()
+                    close_socket()
+                    sys.exit()
+                else:
+                    msg = 'n No I dont want'
+                    connectionSock.send(msg.encode('utf-8'))
             content = None
             waste = pygame.mouse.get_pos()
         time.sleep(0.1)
