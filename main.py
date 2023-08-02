@@ -270,7 +270,7 @@ def close_socket(is_host):
         
 def notice_not_valid_point():
     window = Tk()
-    window.title('You lose')
+    window.title('Wrong Move')
     frm=Frame(window, width=298, height=126, bg='gray79')
     frm.pack()
     text1 = Label(window, text = "You can\'t put your stone there.",bg='gray79', fg='black', font=('Helvetica', 12))
