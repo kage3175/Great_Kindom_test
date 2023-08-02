@@ -216,6 +216,7 @@ def is_caught(blackorwhite):
                 if flag:
                     break
             if caught:
+                print(cluster)
                 clusters_black.remove(cluster)
                 clusters_blank.append(cluster)
                 return True
@@ -232,6 +233,7 @@ def is_caught(blackorwhite):
                 if flag:
                     break
             if caught:
+                print(cluster)
                 clusters_white.remove(cluster)
                 clusters_blank.append(cluster)
                 return True
