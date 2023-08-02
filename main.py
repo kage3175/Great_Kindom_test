@@ -296,16 +296,16 @@ def main_game():
     pygame.display.set_caption('Great Kingdom')
 
     fontObj = pygame.font.Font(None, 50)
-    
+    rand_num = random.random()
+    print(rand_num)
+
     if is_host:
-        if random.random() > 0.5:
-            whose_black = False
+        if rand_num > 0.5:
             my_stone = 2
             op_stone = 1
             textSurfaceObj1 = fontObj.render('White', True, (0,0,0))
             msg = 'w white'
         else:
-            whose_black = True
             my_stone = 1
             op_stone = 2
             textSurfaceObj1 = fontObj.render('Black', True, (0,0,0))
@@ -363,9 +363,9 @@ def main_game():
                                             sys.exit()
                                         turn += 1
                                     else:
-                                        print('blank: ', clusters_blank)
+                                        '''print('blank: ', clusters_blank)
                                         print('black: ', clusters_black_house)
-                                        print('white: ', clusters_white_house)
+                                        print('white: ', clusters_white_house)'''
                                         notice_not_valid_point()
                     else:
                         continue
