@@ -150,6 +150,7 @@ def request_counting(): #작업해야하는거
     window.mainloop()
 
 def accept_counting(win):
+    global accept_count
     win.destroy()
     accept_count = True
 
@@ -163,6 +164,19 @@ def wait_accept():
     if content != None:
         window.destroy()
         return
+    window.mainloop()
+
+def notice_not_valid_point():
+    window = Tk()
+    window.title('Wrong Move')
+    frm=Frame(window, width=298, height=126, bg='gray79')
+    frm.pack()
+    text1 = Label(window, text = "You can\'t put your stone there.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text1.place(x = 15, y = 10)
+    text2 = Label(window, text = "Press Confirm Button to return to game.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text2.place(x = 15, y = 40)
+    select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, font=('Helvetica', 14), command = quit)
+    select_OK.place(x = 30, y = 76)
     window.mainloop()
 
 def counting_house():
@@ -268,25 +282,12 @@ def close_socket(is_host):
     else:
         clientSock.close()
         
-def notice_not_valid_point():
-    window = Tk()
-    window.title('Wrong Move')
-    frm=Frame(window, width=298, height=126, bg='gray79')
-    frm.pack()
-    text1 = Label(window, text = "You can\'t put your stone there.",bg='gray79', fg='black', font=('Helvetica', 12))
-    text1.place(x = 15, y = 10)
-    text2 = Label(window, text = "Press Confirm Button to return to game.",bg='gray79', fg='black', font=('Helvetica', 12))
-    text2.place(x = 15, y = 40)
-    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
-    select_OFF.place(x = 30, y = 76)
-    window.mainloop()
-        
 def send_signals(line):
     global connectionSock
     connectionSock.send(line.encode('utf-8'))
 
 def main_game():
-    global connectionSock, is_host, running, content, board, mark_cluster
+    global connectionSock, is_host, running, content, board, mark_cluster, accept_count
     global imgBoard, imgBlackStone, imgWhiteStone, imgNeutral, imgResignButton, imgCountRequestButton, fontObj
     pygame.init()
     my_stone = 1
@@ -362,6 +363,8 @@ def main_game():
                                         turn += 1
                                     else:
                                         notice_not_valid_point()
+                                        print(1)
+                                        continue
                     else:
                         continue
                 if (posx >= 97 and posx <= 283) and (posy >= 603 and posy <= 696): # 기권하기 버튼을 누른 경우, 게임이 끝나는 경우
