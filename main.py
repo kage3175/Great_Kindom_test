@@ -251,6 +251,19 @@ def close_socket(is_host):
     else:
         clientSock.close()
         
+def notice_not_valid_point():
+    window = Tk()
+    window.title('You lose')
+    frm=Frame(window, width=298, height=126, bg='gray79')
+    frm.pack()
+    text1 = Label(window, text = "You can\'t put your stone there.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text1.place(x = 15, y = 10)
+    text2 = Label(window, text = "Press Confirm Button to return to game.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text2.place(x = 15, y = 40)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF.place(x = 30, y = 76)
+    window.mainloop()
+        
 
 def main_game():
     global connectionSock, is_host, running, content, board, mark_cluster
@@ -333,7 +346,7 @@ def main_game():
                                         board[i+1][j+1] = my_stone
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
-                                        if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우
+                                        if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우, 게임이 끝나는 경우
                                             send_quit_msg()
                                             you_win('c')
                                             close_socket()
@@ -344,12 +357,14 @@ def main_game():
                                         print('blank: ', clusters_blank)
                                         print('black: ', clusters_black_house)
                                         print('white: ', clusters_white_house)
-                                        print('not valid point')
+                                        notice_not_valid_point()
                     else:
                         continue
-                if (posx >= 97 and posx <= 283) and (posy >= 603 and posy <= 696): # 기권하기 버튼을 누른 경우
+                if (posx >= 97 and posx <= 283) and (posy >= 603 and posy <= 696): # 기권하기 버튼을 누른 경우, 게임이 끝나는 경우
                     msg = 'r I resign'
                     connectionSock.send(msg.encode('utf-8'))
+                    time.sleep(0.1)
+                    send_quit_msg()
                     opponent_win('r')
                     pygame.quit()
                     close_socket()
@@ -358,7 +373,7 @@ def main_game():
                     msg = 'h I want Counting'
                     connectionSock.send(msg.encode('utf-8'))
                     wait_accept()
-                    if content[0] == 'a' or content[0] == 'A': #상대가 수락한 경우
+                    if content[0] == 'a' or content[0] == 'A': #상대가 수락한 경우, 게임이 끝나는 경우
                         black_house, white_house = counting_house()
                         winneris(black_house, white_house)
                         pygame.quit()
@@ -390,23 +405,31 @@ def main_game():
                 lst_words = list(content.split())
                 x, y = int(lst_words[1]), int(lst_words[2])
                 board[x][y] = op_stone
-                print('blank: ', clusters_blank)
+                '''print('blank: ', clusters_blank)
                 print('black: ', clusters_black_house)
-                print('white: ', clusters_white_house)
-                if is_caught(my_stone):
+                print('white: ', clusters_white_house)'''
+                if is_caught(my_stone): # 게임이 끝나는 경우
+                    send_quit_msg()
                     opponent_win('c')
+                    close_socket()
+                    pygame.quit()
+                    sys.exit()
                 turn+=1
                 make_cluster(1, BOARD_SIZE+1)
-            elif content[0] == 'r' or content[0] == 'R': #상대방이 기권한 경우
+            elif content[0] == 'r' or content[0] == 'R': #상대방이 기권한 경우, 게임이 끝나는 경우
+                send_quit_msg()
                 you_win('r')
-            elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우
+                close_socket()
+                pygame.quit()
+                sys.exit()
+            elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우, 게임이 끝나는 경우
                 opponent_leaved()
                 pygame.quit()
                 close_socket()
                 sys.exit()
             elif content[0] == 'h' or content[0] == 'H': #상대방이 계가를 요청한 경우
                 request_counting()
-                if accept_count:
+                if accept_count: # 게임이 끝나는 경우
                     msg = 'a I accept your request'
                     connectionSock.send(msg.encode('utf-8'))
                     black_house, white_house = counting_house()
@@ -588,7 +611,6 @@ def waiting_for_access(window, entry):
     global serverSock
     global connectionSock
     port_num = int(entry.get())
-    print(port_num)
     serverSock = socket(AF_INET, SOCK_STREAM)
     serverSock.bind(('', port_num))
     serverSock.listen(1)
@@ -606,10 +628,5 @@ def waiting_for_access(window, entry):
 def backto_start_window(window):
     window.destroy()
     start_window()
-
-def test(window, entry):
-    port = entry.get()
-    window.destroy()
-    print(port)
 
 start_window()
