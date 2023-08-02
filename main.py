@@ -354,6 +354,7 @@ def main_game():
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
                                         if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우, 게임이 끝나는 경우
+                                            print(1)
                                             blit_screen(screen, lst_text)
                                             pygame.display.flip()
                                             send_signals('s')
