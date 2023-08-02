@@ -41,7 +41,6 @@ board = [[0 for i in range(BOARD_SIZE+2)] for j in range(BOARD_SIZE+2)]
 mark_cluster = [[True for i in range(BOARD_SIZE+3)] for j in range(BOARD_SIZE+2)]
 
 is_host = True
-running = True
 
 serverSock = socket(AF_INET, SOCK_STREAM)
 clientSock = socket(AF_INET, SOCK_STREAM)
@@ -233,7 +232,6 @@ def is_caught(blackorwhite):
                 if flag:
                     break
             if caught:
-                print(cluster)
                 clusters_black.remove(cluster)
                 clusters_blank.append(cluster)
                 return True
@@ -250,7 +248,6 @@ def is_caught(blackorwhite):
                 if flag:
                     break
             if caught:
-                print(cluster)
                 clusters_white.remove(cluster)
                 clusters_blank.append(cluster)
                 return True
@@ -290,11 +287,11 @@ def send_signals(line):
     connectionSock.send(line.encode('utf-8'))
 
 def main_game():
-    global connectionSock, is_host, running, content, board, mark_cluster, accept_count
+    global connectionSock, is_host, content, board, mark_cluster, accept_count
     global imgBoard, imgBlackStone, imgWhiteStone, imgNeutral, imgResignButton, imgCountRequestButton, fontObj
     pygame.init()
     my_stone = 1
-    running = True
+    op_stone = 2
     screen=pygame.display.set_mode((800,720))
     pygame.display.set_caption('Great Kingdom')
 
@@ -338,7 +335,6 @@ def main_game():
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
-                running = False
                 pygame.quit()
                 send_quit_msg()
                 close_socket(is_host)
@@ -366,7 +362,6 @@ def main_game():
                                         turn += 1
                                     else:
                                         notice_not_valid_point()
-                                        print(1)
                                         continue
                     else:
                         continue
@@ -601,12 +596,6 @@ def client_check_valid_ip(window, entry_ip, entry_port):
     main_game()
 
 def waiting_window(port_num, my_ip, stop_event):
-    '''def check_stop_event():
-        if stop_event.is_set():
-            new_window.destroy()
-            return
-        else:
-            new_window.after(100, check_stop_event)'''
     new_window=Tk()
     new_window.title('Waiting for Client...')
     frm=Frame(new_window, width=345, height=150, bg='white')
@@ -620,7 +609,6 @@ def waiting_window(port_num, my_ip, stop_event):
     while not stop_event.is_set():
         new_window.update()
         time.sleep(0.1)
-
     new_window.destroy()
 
 def waiting_for_access(window, entry):
