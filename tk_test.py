@@ -55,6 +55,20 @@ def wait_accept():
     text1 = Label(window, text = "Waiting for Opponent's response...",bg='gray79', fg='black', font=('Helvetica', 12))
     text1.place(x = 15, y = 30)
     window.mainloop()
+    
+def notice_not_valid_point():
+    window = Tk()
+    window.title('You lose')
+    frm=Frame(window, width=298, height=126, bg='gray79')
+    frm.pack()
+    text1 = Label(window, text = "You can\'t put your stone there.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text1.place(x = 15, y = 10)
+    text2 = Label(window, text = "Press Confirm Button to return to game.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text2.place(x = 15, y = 40)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF.place(x = 30, y = 76)
+    window.mainloop()
+    
 
 '''window = Tk()
 window.title('Result')
@@ -75,4 +89,4 @@ select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, fon
 select_OK.place(x = 11, y = 120)
 window.mainloop()'''
 
-wait_accept()
+notice_not_valid_point()
