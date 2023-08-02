@@ -77,7 +77,7 @@ def opponent_leaved():
     text1.place(x = 15, y = 10)
     text2 = Label(window, text = "Press Confirm Button to quit the game.",bg='gray79', fg='black', font=('Helvetica', 12))
     text2.place(x = 15, y = 40)
-    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = window.destroy)
     select_OFF.place(x = 30, y = 76)
     window.mainloop()
 
@@ -94,7 +94,7 @@ def you_win(win_code):
         text1.place(x = 15, y = 10)
     text2 = Label(window, text = "Press Confirm Button to quit the game.",bg='gray79', fg='black', font=('Helvetica', 12))
     text2.place(x = 15, y = 40)
-    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = window.destroy)
     select_OFF.place(x = 30, y = 76)
     window.mainloop()
 
@@ -129,7 +129,7 @@ def opponent_win(lose_code):
         text1.place(x = 15, y = 10)
     text2 = Label(window, text = "Press Confirm Button to quit the game.",bg='gray79', fg='black', font=('Helvetica', 12))
     text2.place(x = 15, y = 40)
-    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = window.destroy)
     select_OFF.place(x = 30, y = 76)
     window.mainloop()
 
@@ -145,7 +145,7 @@ def request_counting(): #작업해야하는거
     text_notice.place(x= 12, y= 10)
     select_host = Button(window, text = "    Accept    ", height = 2, width = 13, font=('Helvetica', 14), command = lambda: accept_counting(window))
     select_host.place(x = 10, y = 50)
-    select_client = Button(window, text = "    Refuse    ", height = 2, width = 13, font=('Helvetica', 14), command = quit)
+    select_client = Button(window, text = "    Refuse    ", height = 2, width = 13, font=('Helvetica', 14), command = window.destroy)
     select_client.place(x = 182, y = 50)
     window.mainloop()
 
@@ -175,7 +175,7 @@ def notice_not_valid_point():
     text1.place(x = 15, y = 10)
     text2 = Label(window, text = "Press Confirm Button to return to game.",bg='gray79', fg='black', font=('Helvetica', 12))
     text2.place(x = 15, y = 40)
-    select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, font=('Helvetica', 14), command = quit)
+    select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, font=('Helvetica', 14), command = window.destroy)
     select_OK.place(x = 30, y = 76)
     window.mainloop()
 
@@ -209,7 +209,7 @@ def winneris(blackhouse, whitehouse):
     select_host.place(x = 10, y = 50)
     select_client = Button(window, text = "    Refuse    ", height = 2, width = 13, font=('Helvetica', 14), command = quit)
     select_client.place(x = 182, y = 50)'''
-    select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, font=('Helvetica', 14), command = quit)
+    select_OK = Button(window, text = "    Confirm    ", height = 1, width = 10, font=('Helvetica', 14), command = window.destroy)
     select_OK.place(x = 11, y = 120)
     window.mainloop()
 
