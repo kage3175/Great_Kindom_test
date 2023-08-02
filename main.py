@@ -161,10 +161,13 @@ def wait_accept():
     frm.pack()
     text1 = Label(window, text = "Waiting for Opponent's response...",bg='gray79', fg='black', font=('Helvetica', 12))
     text1.place(x = 15, y = 30)
-    if content != None:
-        window.destroy()
-        return
-    window.mainloop()
+    while True:
+        if content != None:
+            window.destroy()
+            return
+        window.update_idletasks()
+        window.update()
+        time.sleep(0.1)
 
 def notice_not_valid_point():
     window = Tk()
