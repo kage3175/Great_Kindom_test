@@ -61,8 +61,35 @@ def clear_board():
         board[i][0]=3
         board[i][BOARD_SIZE+1]=3
 
-def opponent_leaved(): ### 작업해야함
-    print('out')
+def opponent_leaved():
+    window = Tk()
+    window.title('Opponent Leaved')
+    frm=Frame(window, width=298, height=125, bg='gray79')
+    frm.pack()
+    text1 = Label(window, text = "Opponent leaved the game.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text1.place(x = 15, y = 10)
+    text2 = Label(window, text = "Press Confirm Button to quit the game.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text2.place(x = 15, y = 40)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF.place(x = 30, y = 76)
+    window.mainloop()
+
+def you_win(win_code):
+    window = Tk()
+    window.title('You win!')
+    frm=Frame(window, width=298, height=126, bg='gray79')
+    frm.pack()
+    if win_code == 'c':
+        text1 = Label(window, text = "You won by capturing Opponent's stone!",bg='gray79', fg='black', font=('Helvetica', 12))
+        text1.place(x = 15, y = 10)
+    elif win_code == 'r':
+        text1 = Label(window, text = "Opponent resigned.",bg='gray79', fg='black', font=('Helvetica', 12))
+        text1.place(x = 15, y = 10)
+    text2 = Label(window, text = "Press Confirm Button to quit the game.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text2.place(x = 15, y = 40)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF.place(x = 30, y = 76)
+    window.mainloop()
 
 def receive(sock):
     global content
@@ -78,11 +105,22 @@ def receive(sock):
         else:
             content = line
 
-def you_win(): #작업해야 하는 거
-    print('you win')
-
-def opponent_win(): #작업해야 하는 거
-    print('TT')
+def opponent_win(lose_code):
+    window = Tk()
+    window.title('You lose')
+    frm=Frame(window, width=298, height=126, bg='gray79')
+    frm.pack()
+    if lose_code == 'r':
+        text1 = Label(window, text = "You Resigned.",bg='gray79', fg='black', font=('Helvetica', 12))
+        text1.place(x = 15, y = 10)
+    elif lose_code == 'c':
+        text1 = Label(window, text = "Opponent captured your stone.",bg='gray79', fg='black', font=('Helvetica', 12))
+        text1.place(x = 15, y = 10)
+    text2 = Label(window, text = "Press Confirm Button to quit the game.",bg='gray79', fg='black', font=('Helvetica', 12))
+    text2.place(x = 15, y = 40)
+    select_OFF = Button(window, text = "    Confirm    ", bg = 'snow', height = 1, width = 20, font=('Helvetica', 14), command = quit)
+    select_OFF.place(x = 30, y = 76)
+    window.mainloop()
 
 def request_counting(): #작업해야하는거
     window = Tk()
@@ -276,7 +314,7 @@ def main_game():
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
                                         if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우
-                                            you_win()
+                                            you_win('c')
                                         turn += 1
                                     else:
                                         print('blank: ', clusters_blank)
@@ -288,7 +326,7 @@ def main_game():
                 if (posx >= 97 and posx <= 283) and (posy >= 603 and posy <= 696): # 기권하기 버튼을 누른 경우
                     msg = 'r I resign'
                     connectionSock.send(msg.encode('utf-8'))
-                    opponent_win()
+                    opponent_win('r')
                 if (posx >= 353 and posx <= 540) and (posy >= 603 and posy <= 696): # 계가하기 버튼을 누른 경우
                     msg = 'h I want Counting'
                     connectionSock.send(msg.encode('utf-8'))
@@ -320,13 +358,14 @@ def main_game():
                 print('black: ', clusters_black_house)
                 print('white: ', clusters_white_house)
                 if is_caught(my_stone):
-                    opponent_win()
+                    opponent_win('c')
                 turn+=1
                 make_cluster(1, BOARD_SIZE+1)
             elif content[0] == 'r' or content[0] == 'R': #상대방이 기권한 경우
-                you_win()
+                you_win('r')
             elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우
                 opponent_leaved()
+                
             elif content[0] == 'h' or content[0] == 'H': #상대방이 계가를 요청한 경우
                 request_counting()
                 if accept_count:
