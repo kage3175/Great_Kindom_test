@@ -56,8 +56,6 @@ imgNeutral = pygame.image.load('./img/neutral.png')
 imgResignButton = pygame.image.load('./img/resign_button.png')
 imgCountRequestButton = pygame.image.load('./img/counting_request_button.png')
 
-fontObj = pygame.font.Font(None, 50)
-
 def clear_board():
     global board
     for i in range(BOARD_SIZE+2):
@@ -297,18 +295,7 @@ def main_game():
     screen=pygame.display.set_mode((800,720))
     pygame.display.set_caption('Great Kingdom')
 
-    imgBoard = pygame.image.load('./img/board.png')
-    imgBlackStone = pygame.image.load('./img/black_stone.png')
-    imgWhiteStone = pygame.image.load('./img/white_stone.png')
-    imgNeutral = pygame.image.load('./img/neutral.png')
-    imgResignButton = pygame.image.load('./img/resign_button.png')
-    imgCountRequestButton = pygame.image.load('./img/counting_request_button.png')
-
     fontObj = pygame.font.Font(None, 50)
-    
-    
-
-    ### my_stone 1
     
     if is_host:
         if random.random() > 0.5:
@@ -458,7 +445,7 @@ def main_game():
 ############################################################################# End of main
 
 def blit_screen(screen, lst_text):
-    global imgBoard, imgBlackStone, imgWhiteStone, imgNeutral, imgResignButton, imgCountRequestButton, fontObj
+    global imgBoard, imgBlackStone, imgWhiteStone, imgNeutral, imgResignButton, imgCountRequestButton
     screen.fill((255,255,255))
     screen.blit(imgBoard, (52,49))
     '''screen.blit(imgBlackStone, imgBlackStone_RectObj)
