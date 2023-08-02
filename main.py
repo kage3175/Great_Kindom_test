@@ -246,19 +246,16 @@ def check_valid_pos(i, j, turn, not_valid_house): # 작업 끝
     global clusters_black, clusters_black_house, clusters_white, clusters_white_house, clusters_neutral, clusters_blank
     make_cluster(1, BOARD_SIZE+1)
     if board[i][j] != 0:
-        print('not blank')
         return False
     else:
         if turn >= 4:
             if not_valid_house == 1: #상대방 돌이 흑이면, 내가 둔 곳이 흑 집 클러스터 내부인지 확인
                 for cluster in clusters_black_house:
                     if (i, j) in cluster:
-                        print('black house')
                         return False
             else:
                 for cluster in clusters_white_house:
                     if (i, j) in cluster:
-                        print('white house')
                         return False
     return True
 
@@ -297,7 +294,6 @@ def main_game():
 
     fontObj = pygame.font.Font(None, 50)
     rand_num = random.random()
-    print(rand_num)
 
     if is_host:
         if rand_num > 0.5:
@@ -354,7 +350,6 @@ def main_game():
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
                                         connectionSock.send(msg.encode('utf-8'))
                                         if is_caught(op_stone): #내가 둔 돌로 인해 상대방이 잡힌 경우, 게임이 끝나는 경우
-                                            print(1)
                                             blit_screen(screen, lst_text)
                                             pygame.display.flip()
                                             send_signals('s')
@@ -364,9 +359,6 @@ def main_game():
                                             sys.exit()
                                         turn += 1
                                     else:
-                                        '''print('blank: ', clusters_blank)
-                                        print('black: ', clusters_black_house)
-                                        print('white: ', clusters_white_house)'''
                                         notice_not_valid_point()
                     else:
                         continue
@@ -395,14 +387,11 @@ def main_game():
         blit_screen(screen, lst_text)
         pygame.display.flip()
         if content != None: # 상대방이 둔 수를 받는 경우
-            print('opponent: ' + content)
+            #print('opponent: ' + content)
             if turn % 2 != my_stone % 2 and (content[0] == 'c' or content[0] == 'C'):# #상대방이 좌표를 보낸 경우
                 lst_words = list(content.split())
                 x, y = int(lst_words[1]), int(lst_words[2])
                 board[x][y] = op_stone
-                '''print('blank: ', clusters_blank)
-                print('black: ', clusters_black_house)
-                print('white: ', clusters_white_house)'''
                 if is_caught(my_stone): # 게임이 끝나는 경우
                     blit_screen(screen, lst_text)
                     pygame.display.flip()
