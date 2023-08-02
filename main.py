@@ -213,8 +213,8 @@ def is_caught(blackorwhite):
                         caught = False
                         flag = True
                         break
-            if flag:
-                break
+                if flag:
+                    break
             if caught:
                 clusters_black.remove(cluster)
                 clusters_blank.append(cluster)
