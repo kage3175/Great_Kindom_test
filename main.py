@@ -283,6 +283,9 @@ def send_signals(line):
     global connectionSock
     connectionSock.send(line.encode('utf-8'))
 
+def is_in_box(x, y, lefttopx, lefttopy, rightbottomx, rightbottomy):
+    return (x >= lefttopx and x <= rightbottomx) and (y >= lefttopy and y <= rightbottomy)
+
 def main_game():
     global connectionSock, is_host, running, content, board, mark_cluster
     global imgBoard, imgBlackStone, imgWhiteStone, imgNeutral, imgResignButton, imgCountRequestButton, fontObj
@@ -340,11 +343,11 @@ def main_game():
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position = pygame.mouse.get_pos()
                 posx, posy = int(position[0]), int(position[1])
-                if (posx >= (LEFT_GRID[0] - POS_CATCH) and posx <= 558) and (posy >= (LEFT_GRID[1] - POS_CATCH) and posy <= 555): # 판 위를 클릭한 경우
+                if is_in_box(posx, posy, LEFT_GRID[0] - POS_CATCH, 558, LEFT_GRID[1] - POS_CATCH, 555): # 판 위를 클릭한 경우
                     if turn % 2 == my_stone % 2: # 내 턴인 경우
                         for i in range(9):
                             for j in range(9):
-                                if (posx >= (round(LEFT_GRID[0]+GAP_GRID[0]*i) - POS_CATCH) and posx <= (round(LEFT_GRID[0]+GAP_GRID[0]*i) + POS_CATCH)) and (posy >= (round(LEFT_GRID[1]+GAP_GRID[1]*j) - POS_CATCH) and posy <= (round(LEFT_GRID[1]+GAP_GRID[1]*j) + POS_CATCH)): #i, j의 인식 범위를 누른 경우
+                                if is_in_box(posx, posy, round(LEFT_GRID[0]+GAP_GRID[0]*i) - POS_CATCH, round(LEFT_GRID[0]+GAP_GRID[0]*i) + POS_CATCH, round(LEFT_GRID[1]+GAP_GRID[1]*j) - POS_CATCH, round(LEFT_GRID[1]+GAP_GRID[1]*j) + POS_CATCH): #i, j의 인식 범위를 누른 경우
                                     if check_valid_pos(i+1, j+1, turn, op_stone):
                                         board[i+1][j+1] = my_stone
                                         msg = 'c ' + str(i+1) + " " +str(j+1)
@@ -362,7 +365,7 @@ def main_game():
                                         notice_not_valid_point()
                     else:
                         continue
-                if (posx >= 97 and posx <= 283) and (posy >= 603 and posy <= 696): # 기권하기 버튼을 누른 경우, 게임이 끝나는 경우
+                if is_in_box(posx, posy, 97, 283, 603, 696): # 기권하기 버튼을 누른 경우, 게임이 끝나는 경우
                     msg = 'r I resign'
                     connectionSock.send(msg.encode('utf-8'))
                     time.sleep(0.1)
@@ -371,7 +374,7 @@ def main_game():
                     pygame.quit()
                     close_socket(is_host)
                     sys.exit()
-                if (posx >= 353 and posx <= 540) and (posy >= 603 and posy <= 696): # 계가하기 버튼을 누른 경우
+                if is_in_box(posx, posy, 353, 540, 603, 696): # 계가하기 버튼을 누른 경우
                     msg = 'h I want Counting'
                     connectionSock.send(msg.encode('utf-8'))
                     wait_accept()
