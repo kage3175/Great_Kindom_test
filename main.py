@@ -399,9 +399,9 @@ def main_game():
                 lst_words = list(content.split())
                 x, y = int(lst_words[1]), int(lst_words[2])
                 board[x][y] = op_stone
-                print('blank: ', clusters_blank)
+                '''print('blank: ', clusters_blank)
                 print('black: ', clusters_black_house)
-                print('white: ', clusters_white_house)
+                print('white: ', clusters_white_house)'''
                 if is_caught(my_stone): # 게임이 끝나는 경우
                     blit_screen(screen, lst_text)
                     pygame.display.flip()
