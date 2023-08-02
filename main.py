@@ -339,7 +339,7 @@ def main_game():
                 running = False
                 pygame.quit()
                 send_quit_msg()
-                close_socket()
+                close_socket(is_host)
                 sys.exit()
             elif event.type==MOUSEBUTTONDOWN and event.button==1:
                 position = pygame.mouse.get_pos()
@@ -358,7 +358,7 @@ def main_game():
                                             pygame.display.flip()
                                             send_signals('s')
                                             you_win('c')
-                                            close_socket()
+                                            close_socket(is_host)
                                             pygame.quit()
                                             sys.exit()
                                         turn += 1
@@ -376,7 +376,7 @@ def main_game():
                     send_signals('s')
                     opponent_win('r')
                     pygame.quit()
-                    close_socket()
+                    close_socket(is_host)
                     sys.exit()
                 if (posx >= 353 and posx <= 540) and (posy >= 603 and posy <= 696): # 계가하기 버튼을 누른 경우
                     msg = 'h I want Counting'
@@ -387,7 +387,7 @@ def main_game():
                         send_signals('s')
                         winneris(black_house, white_house)
                         pygame.quit()
-                        close_socket()
+                        close_socket(is_host)
                         sys.exit()
                     else: 
                         continue
@@ -407,7 +407,7 @@ def main_game():
                     pygame.display.flip()
                     send_signals('s')
                     opponent_win('c')
-                    close_socket()
+                    close_socket(is_host)
                     pygame.quit()
                     sys.exit()
                 turn+=1
@@ -415,13 +415,13 @@ def main_game():
             elif content[0] == 'r' or content[0] == 'R': #상대방이 기권한 경우, 게임이 끝나는 경우
                 send_signals('s')
                 you_win('r')
-                close_socket()
+                close_socket(is_host)
                 pygame.quit()
                 sys.exit()
             elif content[0] == 'Q' or content[0] == 'q': #상대방이 파이게임 창을 끈 경우, 게임이 끝나는 경우
                 opponent_leaved()
                 pygame.quit()
-                close_socket()
+                close_socket(is_host)
                 sys.exit()
             elif content[0] == 'h' or content[0] == 'H': #상대방이 계가를 요청한 경우
                 request_counting()
@@ -434,7 +434,7 @@ def main_game():
                     winneris(black_house, white_house)
                     accept_count = False
                     pygame.quit()
-                    close_socket()
+                    close_socket(is_host)
                     sys.exit()
                 else:
                     msg = 'n No I dont want'
